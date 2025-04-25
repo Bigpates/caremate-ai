@@ -8,18 +8,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #4a6fa5;
-            --secondary-color: #f8f9fa;
-            --text-color: #333;
-            --light-gray: #e9ecef;
-            --dark-gray: #6c757d;
+            --primary-color: #2d3142;
+            --secondary-color: #4f5d75;
+            --accent-color: #5c946e;
+            --text-color: #f5f5f5;
+            --dark-bg: #1a1a1a;
+            --medium-bg: #2a2a2a;
+            --light-bg: #333333;
             --border-radius: 12px;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--secondary-color);
+            background-color: var(--dark-bg);
             color: var(--text-color);
             min-height: 100vh;
             display: flex;
@@ -44,59 +46,250 @@
         
         .header h1 {
             font-weight: 600;
-            color: var(--primary-color);
+            color: var(--text-color);
             margin-bottom: 5px;
         }
         
         .header p {
-            color: var(--dark-gray);
+            color: #aaa;
             font-size: 1.2rem;
         }
         
-        .chat-area {
-            flex: 1;
+        /* Onboarding Form Styles */
+        .onboarding-container {
+            background-color: var(--medium-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .onboarding-step {
+            display: none;
+        }
+        
+        .onboarding-step.active {
+            display: block;
+            animation: slideIn 0.4s ease-in-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .step-indicator {
             display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #555;
+            border-radius: 50%;
+            margin: 0 8px;
+            transition: all 0.3s;
+        }
+        
+        .step-dot.active {
+            background-color: var(--accent-color);
+            transform: scale(1.2);
+        }
+        
+        .step-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-control {
+            background-color: var(--light-bg);
+            border: 1px solid #444;
+            color: var(--text-color);
+            border-radius: 8px;
+            padding: 12px 15px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            background-color: #3a3a3a;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(92, 148, 110, 0.25);
+        }
+        
+        .form-select {
+            background-color: var(--light-bg);
+            border: 1px solid #444;
+            color: var(--text-color);
+            border-radius: 8px;
+            padding: 12px 15px;
+        }
+        
+        .form-select:focus {
+            background-color: #3a3a3a;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(92, 148, 110, 0.25);
+        }
+        
+        .btn-nav {
+            background-color: var(--accent-color);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-nav:hover {
+            background-color: #4a7d5a;
+            transform: translateY(-2px);
+        }
+        
+        .btn-back {
+            background-color: transparent;
+            border: 1px solid #555;
+            color: #ccc;
+        }
+        
+        .btn-back:hover {
+            background-color: #333;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .role-cards {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .role-card {
+            flex: 1;
+            min-width: 200px;
+            background-color: var(--light-bg);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            text-align: center;
+        }
+        
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .role-card.selected {
+            border-color: var(--accent-color);
+            background-color: rgba(92, 148, 110, 0.1);
+        }
+        
+        .role-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+        
+        .role-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .role-card p {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .price-tag {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        /* Chat Interface Styles */
+        .chat-container {
+            display: none;
             flex-direction: column;
-            background-color: white;
+            height: 80vh;
+            background-color: var(--medium-bg);
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             overflow: hidden;
+            animation: fadeIn 0.5s ease-in-out;
         }
         
         .chat-header {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--secondary-color);
             padding: 15px 25px;
-            font-weight: 500;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .chat-header .role-selector {
+        .chat-title {
+            font-weight: 500;
+            color: white;
             display: flex;
             align-items: center;
+            gap: 10px;
         }
         
-        .chat-header .role-selector label {
-            margin-right: 10px;
+        .chat-title i {
+            font-size: 1.2rem;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
             font-size: 0.9rem;
         }
         
-        .chat-header .role-selector select {
-            background-color: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
+        .user-profile i {
+            color: var(--accent-color);
         }
         
         .chat-messages {
             flex: 1;
             overflow-y: auto;
             padding: 25px;
-            min-height: 60vh;
-            max-height: 70vh;
+            background-color: var(--medium-bg);
         }
         
         .message {
@@ -106,24 +299,19 @@
             animation: fadeIn 0.3s ease-in-out;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
         .user-message {
             margin-left: auto;
-            background-color: var(--light-gray);
-            color: var(--text-color);
-            padding: 12px 18px;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 15px 20px;
             border-radius: 18px 18px 4px 18px;
         }
         
         .assistant-message {
             margin-right: auto;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 12px 18px;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            padding: 15px 20px;
             border-radius: 18px 18px 18px 4px;
             white-space: pre-line;
         }
@@ -132,82 +320,103 @@
             border-collapse: collapse;
             width: 100%;
             margin: 15px 0;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.05);
             border-radius: 4px;
             overflow: hidden;
         }
         
         .assistant-message th, .assistant-message td {
-            padding: 8px 12px;
+            padding: 10px 15px;
             text-align: left;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .assistant-message th {
-            background-color: rgba(255, 255, 255, 0.15);
+            background-color: rgba(255, 255, 255, 0.08);
         }
         
         .chat-input {
             padding: 20px;
-            border-top: 1px solid var(--light-gray);
-            background-color: white;
+            background-color: var(--light-bg);
+            border-top: 1px solid #444;
         }
         
         .input-group {
             position: relative;
+            display: flex;
+            align-items: center;
         }
         
-        .form-control {
+        .message-input {
+            flex: 1;
+            background-color: var(--medium-bg);
+            border: 1px solid #444;
+            color: var(--text-color);
             border-radius: 30px;
-            padding: 12px 20px;
+            padding: 15px 20px;
             font-size: 1rem;
-            border: 1px solid var(--light-gray);
-            box-shadow: none;
             transition: all 0.3s;
         }
         
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(74, 111, 165, 0.25);
+        .message-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(92, 148, 110, 0.25);
+            outline: none;
         }
         
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            border-radius: 30px;
-            padding: 10px 20px;
-            font-weight: 500;
+        .send-button {
+            background-color: var(--accent-color);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            cursor: pointer;
             transition: all 0.3s;
         }
         
-        .btn-primary:hover {
-            background-color: #3a5a8c;
-            border-color: #3a5a8c;
+        .send-button:hover {
+            background-color: #4a7d5a;
+            transform: scale(1.05);
         }
         
         .loading {
             display: none;
             text-align: center;
             padding: 15px;
-            color: var(--dark-gray);
+            color: #aaa;
         }
         
-        .spinner-border {
-            width: 1.5rem;
-            height: 1.5rem;
-            color: var(--primary-color);
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto;
+            border: 3px solid rgba(92, 148, 110, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
         }
         
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Debug Section Styles */
         .debug-section {
             margin-top: 20px;
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: var(--box-shadow);
             display: none;
+            background-color: var(--medium-bg);
         }
         
         .debug-header {
-            background-color: var(--dark-gray);
+            background-color: var(--secondary-color);
             color: white;
             padding: 10px 15px;
             font-weight: 500;
@@ -218,38 +427,77 @@
         
         #debug {
             padding: 15px;
-            background-color: #f8f9fa;
+            background-color: var(--light-bg);
             font-family: monospace;
             font-size: 12px;
             max-height: 300px;
             overflow-y: auto;
-            border: 1px solid var(--light-gray);
+            color: #ccc;
         }
         
         .debug-buttons {
             display: flex;
             gap: 10px;
-            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: var(--light-bg);
+            border-top: 1px solid #444;
         }
         
         .btn-sm {
             padding: 5px 10px;
             font-size: 0.875rem;
+            border-radius: 4px;
         }
         
         .btn-outline-secondary {
-            color: var(--dark-gray);
-            border-color: var(--dark-gray);
+            color: #aaa;
+            border-color: #555;
+            background-color: transparent;
         }
         
         .btn-outline-secondary:hover {
-            background-color: var(--dark-gray);
+            background-color: #444;
+            color: white;
+        }
+        
+        .debug-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--medium-bg);
+            color: #aaa;
+            border: 1px solid #444;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .debug-toggle:hover {
+            background-color: var(--light-bg);
             color: white;
         }
         
         @media (max-width: 768px) {
             .app-container {
                 padding: 10px;
+            }
+            
+            .onboarding-container {
+                padding: 20px;
+            }
+            
+            .role-cards {
+                flex-direction: column;
+            }
+            
+            .role-card {
+                min-width: 100%;
             }
             
             .chat-messages {
@@ -269,15 +517,188 @@
             <p>Your NDIS Assistant</p>
         </div>
         
-        <div class="chat-area">
-            <div class="chat-header">
-                <span>Chat with Care Mate</span>
-                <div class="role-selector">
-                    <label for="userRole">I am a:</label>
-                    <select id="userRole" class="form-select form-select-sm">
-                        <option value="participant">NDIS Participant/Carer</option>
-                        <option value="coordinator">Support Coordinator</option>
+        <!-- Onboarding Form -->
+        <div class="onboarding-container" id="onboardingContainer">
+            <div class="step-indicator">
+                <div class="step-dot active" data-step="1"></div>
+                <div class="step-dot" data-step="2"></div>
+                <div class="step-dot" data-step="3"></div>
+            </div>
+            
+            <!-- Step 1: Select Role -->
+            <div class="onboarding-step active" id="step1">
+                <h2 class="step-title">Welcome to Care Mate! Let's get started.</h2>
+                <p class="text-center mb-4">Please select your role to help us personalize your experience.</p>
+                
+                <div class="role-cards">
+                    <div class="role-card" data-role="participant">
+                        <i class="fas fa-user"></i>
+                        <h3>NDIS Participant</h3>
+                        <p>Get help managing your NDIS plan and supports</p>
+                        <div class="price-tag">$50/month</div>
+                    </div>
+                    
+                    <div class="role-card" data-role="coordinator">
+                        <i class="fas fa-users-cog"></i>
+                        <h3>Support Coordinator</h3>
+                        <p>Tools to help manage participant plans and documentation</p>
+                        <div class="price-tag">$100/month</div>
+                    </div>
+                    
+                    <div class="role-card" data-role="manager">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Plan Manager</h3>
+                        <p>Assistance with financial management of NDIS plans</p>
+                        <div class="price-tag">$80/month</div>
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <div></div> <!-- Empty div for spacing -->
+                    <button class="btn btn-nav" id="step1Next" disabled>Continue</button>
+                </div>
+            </div>
+            
+            <!-- Step 2: Personal Information -->
+            <div class="onboarding-step" id="step2">
+                <h2 class="step-title">Tell us about yourself</h2>
+                <p class="text-center mb-4">This information helps us provide personalized assistance.</p>
+                
+                <!-- Participant Fields (shown/hidden based on role) -->
+                <div id="participantFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="participantName" class="form-label">Your Name</label>
+                        <input type="text" class="form-control" id="participantName" placeholder="Enter your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ndisNumber" class="form-label">NDIS Number</label>
+                        <input type="text" class="form-control" id="ndisNumber" placeholder="Enter your NDIS number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="planStartDate" class="form-label">Plan Start Date</label>
+                        <input type="date" class="form-control" id="planStartDate">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="planEndDate" class="form-label">Plan End Date</label>
+                        <input type="date" class="form-control" id="planEndDate">
+                    </div>
+                </div>
+                
+                <!-- Coordinator Fields -->
+                <div id="coordinatorFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="coordinatorName" class="form-label">Your Name</label>
+                        <input type="text" class="form-control" id="coordinatorName" placeholder="Enter your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="companyName" class="form-label">Company Name</label>
+                        <input type="text" class="form-control" id="companyName" placeholder="Enter your company name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registrationNumber" class="form-label">NDIS Provider Registration Number</label>
+                        <input type="text" class="form-control" id="registrationNumber" placeholder="Enter registration number">
+                    </div>
+                </div>
+                
+                <!-- Plan Manager Fields -->
+                <div id="managerFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="managerName" class="form-label">Your Name</label>
+                        <input type="text" class="form-control" id="managerName" placeholder="Enter your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="managerCompany" class="form-label">Company Name</label>
+                        <input type="text" class="form-control" id="managerCompany" placeholder="Enter your company name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="managerRegistration" class="form-label">NDIS Provider Registration Number</label>
+                        <input type="text" class="form-control" id="managerRegistration" placeholder="Enter registration number">
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button class="btn btn-nav btn-back" id="step2Back">Back</button>
+                    <button class="btn btn-nav" id="step2Next">Continue</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Preferences -->
+            <div class="onboarding-step" id="step3">
+                <h2 class="step-title">Almost there!</h2>
+                <p class="text-center mb-4">Let us know your preferences to enhance your experience.</p>
+                
+                <div class="form-group">
+                    <label for="communicationPreference" class="form-label">Preferred Communication Style</label>
+                    <select class="form-select" id="communicationPreference">
+                        <option value="detailed">Detailed (comprehensive information)</option>
+                        <option value="concise" selected>Concise (brief and to the point)</option>
+                        <option value="simple">Simple (easy to understand language)</option>
                     </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="assistanceAreas" class="form-label">Areas You Need Assistance With</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="plan-management" id="planManagement">
+                        <label class="form-check-label" for="planManagement">
+                            NDIS Plan Management
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="documentation" id="documentation">
+                        <label class="form-check-label" for="documentation">
+                            Documentation & Reports
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="service-providers" id="serviceProviders">
+                        <label class="form-check-label" for="serviceProviders">
+                            Finding Service Providers
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="funding" id="funding">
+                        <label class="form-check-label" for="funding">
+                            Understanding Funding
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="goals" id="goals">
+                        <label class="form-check-label" for="goals">
+                            Setting & Tracking Goals
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="additionalInfo" class="form-label">Anything else you'd like us to know?</label>
+                    <textarea class="form-control" id="additionalInfo" rows="3" placeholder="Enter any additional information that might help us assist you better"></textarea>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button class="btn btn-nav btn-back" id="step3Back">Back</button>
+                    <button class="btn btn-nav" id="step3Complete">Start Using Care Mate</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Interface -->
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <i class="fas fa-robot"></i>
+                    <span>Chat with Care Mate</span>
+                </div>
+                <div class="user-profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userRoleDisplay">NDIS Participant</span>
                 </div>
             </div>
             
@@ -288,24 +709,21 @@
             </div>
             
             <div class="loading" id="loading">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <span class="ms-2">Thinking...</span>
+                <div class="spinner"></div>
+                <p>Thinking...</p>
             </div>
             
             <div class="chat-input">
-                <form id="chatForm">
-                    <div class="input-group">
-                        <input type="text" id="userInput" class="form-control" placeholder="Type your message here..." required>
-                        <button class="btn btn-primary" type="submit">
-                            <i class="fas fa-paper-plane me-1"></i> Send
-                        </button>
-                    </div>
-                </form>
+                <div class="input-group">
+                    <input type="text" id="userInput" class="message-input" placeholder="Type your message here...">
+                    <button id="sendButton" class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
             </div>
         </div>
         
+        <!-- Debug Section -->
         <div class="debug-section" id="debugSection">
             <div class="debug-header">
                 <span>Debug Information</span>
@@ -319,17 +737,40 @@
             </div>
         </div>
         
-        <div class="text-center mt-3">
-            <button id="toggleDebug" class="btn btn-sm btn-outline-secondary">Show Debug Info</button>
+        <div class="debug-toggle" id="toggleDebug">
+            <i class="fas fa-bug"></i>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const chatForm = document.getElementById('chatForm');
+            // Onboarding Elements
+            const onboardingContainer = document.getElementById('onboardingContainer');
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            const step1Next = document.getElementById('step1Next');
+            const step2Back = document.getElementById('step2Back');
+            const step2Next = document.getElementById('step2Next');
+            const step3Back = document.getElementById('step3Back');
+            const step3Complete = document.getElementById('step3Complete');
+            const roleCards = document.querySelectorAll('.role-card');
+            const stepDots = document.querySelectorAll('.step-dot');
+            
+            // Role-specific fields
+            const participantFields = document.getElementById('participantFields');
+            const coordinatorFields = document.getElementById('coordinatorFields');
+            const managerFields = document.getElementById('managerFields');
+            
+            // Chat Elements
+            const chatContainer = document.getElementById('chatContainer');
             const userInput = document.getElementById('userInput');
+            const sendButton = document.getElementById('sendButton');
             const chatMessages = document.getElementById('chatMessages');
             const loading = document.getElementById('loading');
+            const userRoleDisplay = document.getElementById('userRoleDisplay');
+            
+            // Debug Elements
             const debug = document.getElementById('debug');
             const debugSection = document.getElementById('debugSection');
             const toggleDebug = document.getElementById('toggleDebug');
@@ -337,26 +778,27 @@
             const testDirectButton = document.getElementById('testDirectButton');
             const testProxyButton = document.getElementById('testProxyButton');
             const wakeReplit = document.getElementById('wakeReplit');
-            const userRole = document.getElementById('userRole');
+            
+            // User Profile Data
+            let userProfile = {
+                role: '',
+                name: '',
+                ndisNumber: '',
+                companyName: '',
+                registrationNumber: '',
+                planDates: {
+                    start: '',
+                    end: ''
+                },
+                preferences: {
+                    communicationStyle: 'concise',
+                    assistanceAreas: []
+                },
+                additionalInfo: ''
+            };
             
             // Generate a unique session ID for this chat session
             const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
-            
-            // Toggle debug info
-            toggleDebug.addEventListener('click', function() {
-                if (debugSection.style.display === 'none') {
-                    debugSection.style.display = 'block';
-                    toggleDebug.textContent = 'Hide Debug Info';
-                } else {
-                    debugSection.style.display = 'none';
-                    toggleDebug.textContent = 'Show Debug Info';
-                }
-            });
-            
-            // Clear debug info
-            clearDebug.addEventListener('click', function() {
-                debug.innerHTML = '';
-            });
             
             // Backend API URLs
             const PROXY_URL = '/api/chat';
@@ -364,6 +806,197 @@
             
             // Use direct connection by default since it's working
             const API_URL = DIRECT_URL;
+            
+            // Role Card Selection
+            roleCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove selected class from all cards
+                    roleCards.forEach(c => c.classList.remove('selected'));
+                    
+                    // Add selected class to clicked card
+                    this.classList.add('selected');
+                    
+                    // Enable next button
+                    step1Next.disabled = false;
+                    
+                    // Store selected role
+                    userProfile.role = this.dataset.role;
+                });
+            });
+            
+            // Navigation between steps
+            step1Next.addEventListener('click', function() {
+                step1.classList.remove('active');
+                step2.classList.add('active');
+                stepDots[0].classList.remove('active');
+                stepDots[1].classList.add('active');
+                
+                // Show fields based on selected role
+                if (userProfile.role === 'participant') {
+                    participantFields.style.display = 'block';
+                    coordinatorFields.style.display = 'none';
+                    managerFields.style.display = 'none';
+                } else if (userProfile.role === 'coordinator') {
+                    participantFields.style.display = 'none';
+                    coordinatorFields.style.display = 'block';
+                    managerFields.style.display = 'none';
+                } else if (userProfile.role === 'manager') {
+                    participantFields.style.display = 'none';
+                    coordinatorFields.style.display = 'none';
+                    managerFields.style.display = 'block';
+                }
+            });
+            
+            step2Back.addEventListener('click', function() {
+                step2.classList.remove('active');
+                step1.classList.add('active');
+                stepDots[1].classList.remove('active');
+                stepDots[0].classList.add('active');
+            });
+            
+            step2Next.addEventListener('click', function() {
+                // Collect data from step 2
+                if (userProfile.role === 'participant') {
+                    userProfile.name = document.getElementById('participantName').value;
+                    userProfile.ndisNumber = document.getElementById('ndisNumber').value;
+                    userProfile.planDates.start = document.getElementById('planStartDate').value;
+                    userProfile.planDates.end = document.getElementById('planEndDate').value;
+                } else if (userProfile.role === 'coordinator') {
+                    userProfile.name = document.getElementById('coordinatorName').value;
+                    userProfile.companyName = document.getElementById('companyName').value;
+                    userProfile.registrationNumber = document.getElementById('registrationNumber').value;
+                } else if (userProfile.role === 'manager') {
+                    userProfile.name = document.getElementById('managerName').value;
+                    userProfile.companyName = document.getElementById('managerCompany').value;
+                    userProfile.registrationNumber = document.getElementById('managerRegistration').value;
+                }
+                
+                step2.classList.remove('active');
+                step3.classList.add('active');
+                stepDots[1].classList.remove('active');
+                stepDots[2].classList.add('active');
+            });
+            
+            step3Back.addEventListener('click', function() {
+                step3.classList.remove('active');
+                step2.classList.add('active');
+                stepDots[2].classList.remove('active');
+                stepDots[1].classList.add('active');
+            });
+            
+            step3Complete.addEventListener('click', function() {
+                // Collect data from step 3
+                userProfile.preferences.communicationStyle = document.getElementById('communicationPreference').value;
+                
+                // Collect selected assistance areas
+                userProfile.preferences.assistanceAreas = [];
+                document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                    userProfile.preferences.assistanceAreas.push(checkbox.value);
+                });
+                
+                userProfile.additionalInfo = document.getElementById('additionalInfo').value;
+                
+                // Log the completed profile
+                logDebug('User profile completed: ' + JSON.stringify(userProfile));
+                
+                // Hide onboarding and show chat
+                onboardingContainer.style.display = 'none';
+                chatContainer.style.display = 'flex';
+                
+                // Update user role display
+                if (userProfile.role === 'participant') {
+                    userRoleDisplay.textContent = 'NDIS Participant';
+                } else if (userProfile.role === 'coordinator') {
+                    userRoleDisplay.textContent = 'Support Coordinator';
+                } else if (userProfile.role === 'manager') {
+                    userRoleDisplay.textContent = 'Plan Manager';
+                }
+                
+                // Send initial message with user profile
+                sendProfileToAI();
+            });
+            
+            // Send user profile to AI
+            function sendProfileToAI() {
+                loading.style.display = 'block';
+                
+                let profileSummary = `I'm ${userProfile.name}, a ${getRoleDisplayName(userProfile.role)}`;
+                
+                if (userProfile.role === 'participant') {
+                    profileSummary += ` with NDIS number ${userProfile.ndisNumber}. My plan runs from ${formatDate(userProfile.planDates.start)} to ${formatDate(userProfile.planDates.end)}.`;
+                } else {
+                    profileSummary += ` from ${userProfile.companyName} with registration number ${userProfile.registrationNumber}.`;
+                }
+                
+                profileSummary += ` I prefer ${userProfile.preferences.communicationStyle} communication and need help with: ${userProfile.preferences.assistanceAreas.join(', ')}.`;
+                
+                if (userProfile.additionalInfo) {
+                    profileSummary += ` Additional info: ${userProfile.additionalInfo}`;
+                }
+                
+                logDebug(`Sending profile summary: ${profileSummary}`);
+                
+                fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        message: profileSummary,
+                        sessionId: sessionId,
+                        userRole: userProfile.role
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.reply) {
+                        // Replace the default welcome message with the personalized one
+                        const welcomeMessage = chatMessages.querySelector('.assistant-message');
+                        welcomeMessage.innerHTML = formatMessageContent(data.reply);
+                    }
+                })
+                .catch(error => {
+                    logDebug(`Error sending profile: ${error.message}`);
+                    addMessage('Sorry, I encountered an error processing your profile. Please try again later.', 'assistant');
+                })
+                .finally(() => {
+                    loading.style.display = 'none';
+                });
+            }
+            
+            function getRoleDisplayName(role) {
+                switch(role) {
+                    case 'participant': return 'NDIS Participant';
+                    case 'coordinator': return 'Support Coordinator';
+                    case 'manager': return 'Plan Manager';
+                    default: return role;
+                }
+            }
+            
+            function formatDate(dateString) {
+                if (!dateString) return 'unknown date';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+            }
+            
+            // Toggle debug info
+            toggleDebug.addEventListener('click', function() {
+                if (debugSection.style.display === 'none') {
+                    debugSection.style.display = 'block';
+                } else {
+                    debugSection.style.display = 'none';
+                }
+            });
+            
+            // Clear debug info
+            clearDebug.addEventListener('click', function() {
+                debug.innerHTML = '';
+            });
             
             // Log debug info
             function logDebug(message) {
@@ -472,7 +1105,7 @@
                         body: JSON.stringify({ 
                             message: testMessage,
                             sessionId: sessionId + '_test_direct',
-                            userRole: userRole.value
+                            userRole: userProfile.role
                         })
                     });
                     
@@ -509,7 +1142,7 @@
                         body: JSON.stringify({ 
                             message: testMessage,
                             sessionId: sessionId + '_test_proxy',
-                            userRole: userRole.value
+                            userRole: userProfile.role
                         })
                     });
                     
@@ -532,15 +1165,15 @@
                 }
             });
             
-            // Handle role change
-            userRole.addEventListener('change', function() {
-                logDebug(`User role changed to: ${userRole.value}`);
-                addMessage(`I'll now respond as if you're a ${userRole.value === 'coordinator' ? 'Support Coordinator' : 'NDIS Participant or Carer'}.`, 'assistant');
+            // Send message on form submit
+            sendButton.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
             });
             
-            chatForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
+            function sendMessage() {
                 const message = userInput.value.trim();
                 if (!message) return;
                 
@@ -554,10 +1187,10 @@
                 logDebug(`Sending message: "${message}"`);
                 
                 try {
-                    // Send message to backend using the direct URL since it's working
+                    // Send message to backend
                     logDebug(`Fetching ${API_URL} with message: "${message}"`);
                     
-                    const response = await fetch(API_URL, {
+                    fetch(API_URL, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -565,36 +1198,45 @@
                         body: JSON.stringify({ 
                             message: message,
                             sessionId: sessionId,
-                            userRole: userRole.value
+                            userRole: userProfile.role
                         })
+                    })
+                    .then(response => {
+                        logDebug(`Response status: ${response.status}`);
+                        
+                        if (!response.ok) {
+                            throw new Error(`Network response was not ok: ${response.status}`);
+                        }
+                        
+                        return response.json();
+                    })
+                    .then(data => {
+                        logDebug(`Received data: ${JSON.stringify(data)}`);
+                        
+                        // Add assistant response to chat
+                        if (data && data.reply) {
+                            addMessage(data.reply, 'assistant');
+                        } else {
+                            logDebug('Error: No reply in response data');
+                            throw new Error('Invalid response format');
+                        }
+                    })
+                    .catch(error => {
+                        logDebug(`Error: ${error.message}`);
+                        console.error('Error:', error);
+                        addMessage('Sorry, I encountered an error. Please try again later.', 'assistant');
+                    })
+                    .finally(() => {
+                        // Hide loading indicator
+                        loading.style.display = 'none';
                     });
-                    
-                    logDebug(`Response status: ${response.status}`);
-                    
-                    if (!response.ok) {
-                        logDebug(`Error: Response not OK (${response.status})`);
-                        throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
-                    }
-                    
-                    const data = await response.json();
-                    logDebug(`Received data: ${JSON.stringify(data)}`);
-                    
-                    // Add assistant response to chat
-                    if (data && data.reply) {
-                        addMessage(data.reply, 'assistant');
-                    } else {
-                        logDebug('Error: No reply in response data');
-                        throw new Error('Invalid response format');
-                    }
                 } catch (error) {
                     logDebug(`Error: ${error.message}`);
                     console.error('Error:', error);
                     addMessage('Sorry, I encountered an error. Please try again later.', 'assistant');
-                } finally {
-                    // Hide loading indicator
                     loading.style.display = 'none';
                 }
-            });
+            }
             
             function addMessage(text, sender) {
                 logDebug(`Adding ${sender} message: "${text.substring(0, 50)}${text.length > 50 ? '...' : ''}"`);
@@ -605,8 +1247,7 @@
                 
                 if (sender === 'assistant') {
                     // Format the message content to handle tables
-                    const formattedContent = formatMessageContent(text);
-                    messageDiv.innerHTML = formattedContent;
+                    messageDiv.innerHTML = formatMessageContent(text);
                 } else {
                     messageDiv.textContent = text;
                 }

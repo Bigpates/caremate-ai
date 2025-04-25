@@ -61,6 +61,16 @@
             width: 1.5rem;
             height: 1.5rem;
         }
+        #debug {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -96,6 +106,14 @@
                 </form>
             </div>
         </div>
+        
+        <div id="debug"></div>
+        
+        <div class="row mt-3">
+            <div class="col text-center">
+                <button id="toggleDebug" class="btn btn-sm btn-secondary">Show Debug Info</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -104,9 +122,29 @@
             const userInput = document.getElementById('userInput');
             const chatMessages = document.getElementById('chatMessages');
             const loading = document.getElementById('loading');
+            const debug = document.getElementById('debug');
+            const toggleDebug = document.getElementById('toggleDebug');
             
-            // Backend API URL - this should point to your Replit backend
-            const API_URL = '/api/chat'https://caremate-ai-backend-ts67450.replit.app/chat;
+            // Toggle debug info
+            toggleDebug.addEventListener('click', function() {
+                if (debug.style.display === 'none') {
+                    debug.style.display = 'block';
+                    toggleDebug.textContent = 'Hide Debug Info';
+                } else {
+                    debug.style.display = 'none';
+                    toggleDebug.textContent = 'Show Debug Info';
+                }
+            });
+            
+            // Backend API URL - this should point to your Replit backend through Netlify proxy
+            const API_URL = '/api/chat';
+            
+            // Log debug info
+            function logDebug(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                debug.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+                debug.scrollTop = debug.scrollHeight;
+            }
             
             chatForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
@@ -121,8 +159,12 @@
                 // Show loading indicator
                 loading.style.display = 'block';
                 
+                logDebug(`Sending message: "${message}"`);
+                
                 try {
                     // Send message to backend
+                    logDebug(`Fetching ${API_URL} with message: "${message}"`);
+                    
                     const response = await fetch(API_URL, {
                         method: 'POST',
                         headers: {
@@ -131,15 +173,25 @@
                         body: JSON.stringify({ message: message })
                     });
                     
+                    logDebug(`Response status: ${response.status}`);
+                    
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        logDebug(`Error: Response not OK (${response.status})`);
+                        throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
                     }
                     
                     const data = await response.json();
+                    logDebug(`Received data: ${JSON.stringify(data)}`);
                     
                     // Add assistant response to chat
-                    addMessage(data.reply, 'assistant');
+                    if (data && data.reply) {
+                        addMessage(data.reply, 'assistant');
+                    } else {
+                        logDebug('Error: No reply in response data');
+                        throw new Error('Invalid response format');
+                    }
                 } catch (error) {
+                    logDebug(`Error: ${error.message}`);
                     console.error('Error:', error);
                     addMessage('Sorry, I encountered an error. Please try again later.', 'assistant');
                 } finally {
@@ -149,6 +201,8 @@
             });
             
             function addMessage(text, sender) {
+                logDebug(`Adding ${sender} message: "${text.substring(0, 50)}${text.length > 50 ? '...' : ''}"`);
+                
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('message');
                 messageDiv.classList.add(sender === 'user' ? 'user-message' : 'assistant-message');

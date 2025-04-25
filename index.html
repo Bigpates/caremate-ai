@@ -71,6 +71,10 @@
             font-size: 12px;
             display: none;
         }
+        .test-buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -107,6 +111,12 @@
             </div>
         </div>
         
+        <div class="test-buttons">
+            <button id="testDirectButton" class="btn btn-warning">Test Direct Connection to Replit</button>
+            <button id="testProxyButton" class="btn btn-info">Test Netlify Proxy</button>
+            <button id="wakeReplit" class="btn btn-secondary">Wake Up Replit Backend</button>
+        </div>
+        
         <div id="debug"></div>
         
         <div class="row mt-3">
@@ -124,6 +134,9 @@
             const loading = document.getElementById('loading');
             const debug = document.getElementById('debug');
             const toggleDebug = document.getElementById('toggleDebug');
+            const testDirectButton = document.getElementById('testDirectButton');
+            const testProxyButton = document.getElementById('testProxyButton');
+            const wakeReplit = document.getElementById('wakeReplit');
             
             // Toggle debug info
             toggleDebug.addEventListener('click', function() {
@@ -136,8 +149,9 @@
                 }
             });
             
-            // Backend API URL - this should point to your Replit backend through Netlify proxy
-            const API_URL = '/api/chat';
+            // Backend API URLs
+            const PROXY_URL = '/api/chat';
+            const DIRECT_URL = 'https://caremate-ai-backend-ts67450.replit.app/chat';
             
             // Log debug info
             function logDebug(message) {
@@ -145,6 +159,93 @@
                 debug.innerHTML += `<div>[${timestamp}] ${message}</div>`;
                 debug.scrollTop = debug.scrollHeight;
             }
+            
+            // Wake up Replit backend
+            wakeReplit.addEventListener('click', async function() {
+                logDebug('Attempting to wake up Replit backend...');
+                try {
+                    const response = await fetch('https://caremate-ai-backend-ts67450.replit.app/', {
+                        method: 'GET'
+                    });
+                    logDebug(`Wake-up response status: ${response.status}`);
+                    if (response.ok) {
+                        logDebug('Replit backend is now awake!');
+                        addMessage('Replit backend is now awake and ready to use!', 'assistant');
+                    } else {
+                        logDebug('Failed to wake up Replit backend');
+                        addMessage('Failed to wake up Replit backend. Please try again.', 'assistant');
+                    }
+                } catch (error) {
+                    logDebug(`Wake-up error: ${error.message}`);
+                    addMessage('Error connecting to Replit backend. It might be down or unavailable.', 'assistant');
+                }
+            });
+            
+            // Test direct connection to Replit
+            testDirectButton.addEventListener('click', async function() {
+                logDebug('Testing direct connection to Replit backend...');
+                const testMessage = 'Test message from direct connection';
+                
+                try {
+                    const response = await fetch(DIRECT_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message: testMessage })
+                    });
+                    
+                    logDebug(`Direct test response status: ${response.status}`);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        logDebug(`Direct test received data: ${JSON.stringify(data)}`);
+                        addMessage('✅ Direct connection to Replit successful!', 'assistant');
+                        if (data && data.reply) {
+                            addMessage(`Replit response: ${data.reply}`, 'assistant');
+                        }
+                    } else {
+                        logDebug(`Direct test error: Response not OK (${response.status})`);
+                        addMessage('❌ Direct connection to Replit failed. Check debug info for details.', 'assistant');
+                    }
+                } catch (error) {
+                    logDebug(`Direct test error: ${error.message}`);
+                    addMessage('❌ Direct connection to Replit failed. Check debug info for details.', 'assistant');
+                }
+            });
+            
+            // Test Netlify proxy
+            testProxyButton.addEventListener('click', async function() {
+                logDebug('Testing Netlify proxy connection...');
+                const testMessage = 'Test message from Netlify proxy';
+                
+                try {
+                    const response = await fetch(PROXY_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message: testMessage })
+                    });
+                    
+                    logDebug(`Proxy test response status: ${response.status}`);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        logDebug(`Proxy test received data: ${JSON.stringify(data)}`);
+                        addMessage('✅ Netlify proxy connection successful!', 'assistant');
+                        if (data && data.reply) {
+                            addMessage(`Proxy response: ${data.reply}`, 'assistant');
+                        }
+                    } else {
+                        logDebug(`Proxy test error: Response not OK (${response.status})`);
+                        addMessage('❌ Netlify proxy connection failed. Check debug info for details.', 'assistant');
+                    }
+                } catch (error) {
+                    logDebug(`Proxy test error: ${error.message}`);
+                    addMessage('❌ Netlify proxy connection failed. Check debug info for details.', 'assistant');
+                }
+            });
             
             chatForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
@@ -162,10 +263,10 @@
                 logDebug(`Sending message: "${message}"`);
                 
                 try {
-                    // Send message to backend
-                    logDebug(`Fetching ${API_URL} with message: "${message}"`);
+                    // Send message to backend through Netlify proxy
+                    logDebug(`Fetching ${PROXY_URL} with message: "${message}"`);
                     
-                    const response = await fetch(API_URL, {
+                    const response = await fetch(PROXY_URL, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

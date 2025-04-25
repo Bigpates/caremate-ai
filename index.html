@@ -5,127 +5,322 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Care Mate - NDIS Assistant</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #f8f9fa;
+            --text-color: #333;
+            --light-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        .chat-container {
-            max-width: 800px;
+        
+        .app-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+        
+        .header h1 {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+        }
+        
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             overflow: hidden;
         }
+        
         .chat-header {
-            background-color: #0056b3;
+            background-color: var(--primary-color);
             color: white;
-            padding: 15px 20px;
-            font-weight: bold;
+            padding: 15px 25px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        
+        .chat-header .role-selector {
+            display: flex;
+            align-items: center;
+        }
+        
+        .chat-header .role-selector label {
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .chat-header .role-selector select {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
         .chat-messages {
-            height: 400px;
+            flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 25px;
+            min-height: 60vh;
+            max-height: 70vh;
         }
+        
         .message {
-            margin-bottom: 15px;
-            padding: 10px 15px;
-            border-radius: 18px;
-            max-width: 80%;
+            margin-bottom: 20px;
+            max-width: 85%;
             position: relative;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            margin-left: auto;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            padding: 12px 18px;
+            border-radius: 18px 18px 4px 18px;
+        }
+        
+        .assistant-message {
+            margin-right: auto;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 18px 18px 18px 4px;
             white-space: pre-line;
         }
-        .user-message {
-            background-color: #e9ecef;
-            margin-left: auto;
-            border-bottom-right-radius: 5px;
+        
+        .assistant-message table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
         }
-        .assistant-message {
-            background-color: #0056b3;
-            color: white;
-            margin-right: auto;
-            border-bottom-left-radius: 5px;
+        
+        .assistant-message th, .assistant-message td {
+            padding: 8px 12px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
+        
+        .assistant-message th {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
         .chat-input {
-            padding: 15px;
-            border-top: 1px solid #e9ecef;
+            padding: 20px;
+            border-top: 1px solid var(--light-gray);
+            background-color: white;
         }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .form-control {
+            border-radius: 30px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: 1px solid var(--light-gray);
+            box-shadow: none;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(74, 111, 165, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5a8c;
+            border-color: #3a5a8c;
+        }
+        
         .loading {
             display: none;
             text-align: center;
-            padding: 10px;
+            padding: 15px;
+            color: var(--dark-gray);
         }
+        
         .spinner-border {
             width: 1.5rem;
             height: 1.5rem;
+            color: var(--primary-color);
         }
-        #debug {
+        
+        .debug-section {
             margin-top: 20px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-family: monospace;
-            font-size: 12px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
             display: none;
         }
-        .test-buttons {
-            margin-top: 20px;
-            text-align: center;
+        
+        .debug-header {
+            background-color: var(--dark-gray);
+            color: white;
+            padding: 10px 15px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .debug-button {
+        
+        #debug {
+            padding: 15px;
+            background-color: #f8f9fa;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--light-gray);
+        }
+        
+        .debug-buttons {
+            display: flex;
+            gap: 10px;
             margin-top: 10px;
-            text-align: center;
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.875rem;
+        }
+        
+        .btn-outline-secondary {
+            color: var(--dark-gray);
+            border-color: var(--dark-gray);
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: var(--dark-gray);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 10px;
+            }
+            
+            .chat-messages {
+                padding: 15px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container py-5">
-        <div class="row mb-4">
-            <div class="col text-center">
-                <h1>Care Mate</h1>
-                <p class="lead">Your NDIS Assistant</p>
-            </div>
+    <div class="app-container">
+        <div class="header">
+            <h1>Care Mate</h1>
+            <p>Your NDIS Assistant</p>
         </div>
         
-        <div class="chat-container">
+        <div class="chat-area">
             <div class="chat-header">
-                Chat with Care Mate
+                <span>Chat with Care Mate</span>
+                <div class="role-selector">
+                    <label for="userRole">I am a:</label>
+                    <select id="userRole" class="form-select form-select-sm">
+                        <option value="participant">NDIS Participant/Carer</option>
+                        <option value="coordinator">Support Coordinator</option>
+                    </select>
+                </div>
             </div>
+            
             <div class="chat-messages" id="chatMessages">
                 <div class="message assistant-message">
                     Hello! I'm Care Mate, your NDIS assistant. How can I help you today?
                 </div>
             </div>
+            
             <div class="loading" id="loading">
-                <div class="spinner-border text-primary" role="status">
+                <div class="spinner-border" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
                 <span class="ms-2">Thinking...</span>
             </div>
+            
             <div class="chat-input">
                 <form id="chatForm">
                     <div class="input-group">
                         <input type="text" id="userInput" class="form-control" placeholder="Type your message here..." required>
-                        <button class="btn btn-primary" type="submit">Send</button>
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-paper-plane me-1"></i> Send
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
         
-        <div class="test-buttons">
-            <button id="testDirectButton" class="btn btn-warning">Test Direct Connection to Replit</button>
-            <button id="testProxyButton" class="btn btn-info">Test Netlify Proxy</button>
-            <button id="wakeReplit" class="btn btn-secondary">Wake Up Replit Backend</button>
+        <div class="debug-section" id="debugSection">
+            <div class="debug-header">
+                <span>Debug Information</span>
+                <button id="clearDebug" class="btn btn-sm btn-outline-light">Clear</button>
+            </div>
+            <div id="debug"></div>
+            <div class="debug-buttons">
+                <button id="testDirectButton" class="btn btn-sm btn-outline-warning">Test Direct Connection</button>
+                <button id="testProxyButton" class="btn btn-sm btn-outline-info">Test Netlify Proxy</button>
+                <button id="wakeReplit" class="btn btn-sm btn-outline-secondary">Wake Up Replit Backend</button>
+            </div>
         </div>
         
-        <div id="debug"></div>
-        
-        <div class="debug-button">
-            <button id="toggleDebug" class="btn btn-sm btn-secondary">Show Debug Info</button>
+        <div class="text-center mt-3">
+            <button id="toggleDebug" class="btn btn-sm btn-outline-secondary">Show Debug Info</button>
         </div>
     </div>
 
@@ -136,23 +331,31 @@
             const chatMessages = document.getElementById('chatMessages');
             const loading = document.getElementById('loading');
             const debug = document.getElementById('debug');
+            const debugSection = document.getElementById('debugSection');
             const toggleDebug = document.getElementById('toggleDebug');
+            const clearDebug = document.getElementById('clearDebug');
             const testDirectButton = document.getElementById('testDirectButton');
             const testProxyButton = document.getElementById('testProxyButton');
             const wakeReplit = document.getElementById('wakeReplit');
+            const userRole = document.getElementById('userRole');
             
             // Generate a unique session ID for this chat session
             const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
             
             // Toggle debug info
             toggleDebug.addEventListener('click', function() {
-                if (debug.style.display === 'none') {
-                    debug.style.display = 'block';
+                if (debugSection.style.display === 'none') {
+                    debugSection.style.display = 'block';
                     toggleDebug.textContent = 'Hide Debug Info';
                 } else {
-                    debug.style.display = 'none';
+                    debugSection.style.display = 'none';
                     toggleDebug.textContent = 'Show Debug Info';
                 }
+            });
+            
+            // Clear debug info
+            clearDebug.addEventListener('click', function() {
+                debug.innerHTML = '';
             });
             
             // Backend API URLs
@@ -167,6 +370,71 @@
                 const timestamp = new Date().toLocaleTimeString();
                 debug.innerHTML += `<div>[${timestamp}] ${message}</div>`;
                 debug.scrollTop = debug.scrollHeight;
+            }
+            
+            // Format message content to render tables properly
+            function formatMessageContent(content) {
+                // Check if the content contains a table
+                if (content.includes('|')) {
+                    // Split the content by lines
+                    const lines = content.split('\n');
+                    let inTable = false;
+                    let tableHtml = '';
+                    let formattedContent = '';
+                    
+                    for (let line of lines) {
+                        // Check if this line is part of a table
+                        if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
+                            if (!inTable) {
+                                // Start a new table
+                                inTable = true;
+                                tableHtml = '<table>';
+                                
+                                // Check if this is a header row
+                                const isHeader = lines.indexOf(line) < lines.length - 1 && 
+                                                lines[lines.indexOf(line) + 1].trim().startsWith('|') && 
+                                                lines[lines.indexOf(line) + 1].includes('-');
+                                
+                                // Process the row
+                                const cells = line.split('|').filter(cell => cell.trim() !== '');
+                                tableHtml += '<tr>';
+                                for (let cell of cells) {
+                                    tableHtml += isHeader ? `<th>${cell.trim()}</th>` : `<td>${cell.trim()}</td>`;
+                                }
+                                tableHtml += '</tr>';
+                            } else if (line.includes('-') && line.includes('|')) {
+                                // This is a separator row, skip it
+                                continue;
+                            } else {
+                                // Process a regular row
+                                const cells = line.split('|').filter(cell => cell.trim() !== '');
+                                tableHtml += '<tr>';
+                                for (let cell of cells) {
+                                    tableHtml += `<td>${cell.trim()}</td>`;
+                                }
+                                tableHtml += '</tr>';
+                            }
+                        } else {
+                            if (inTable) {
+                                // End the current table
+                                tableHtml += '</table>';
+                                formattedContent += tableHtml;
+                                inTable = false;
+                            }
+                            formattedContent += line + '\n';
+                        }
+                    }
+                    
+                    // Close any open table
+                    if (inTable) {
+                        tableHtml += '</table>';
+                        formattedContent += tableHtml;
+                    }
+                    
+                    return formattedContent;
+                }
+                
+                return content;
             }
             
             // Wake up Replit backend
@@ -203,7 +471,8 @@
                         },
                         body: JSON.stringify({ 
                             message: testMessage,
-                            sessionId: sessionId + '_test_direct'
+                            sessionId: sessionId + '_test_direct',
+                            userRole: userRole.value
                         })
                     });
                     
@@ -239,7 +508,8 @@
                         },
                         body: JSON.stringify({ 
                             message: testMessage,
-                            sessionId: sessionId + '_test_proxy'
+                            sessionId: sessionId + '_test_proxy',
+                            userRole: userRole.value
                         })
                     });
                     
@@ -260,6 +530,12 @@
                     logDebug(`Proxy test error: ${error.message}`);
                     addMessage('❌ Netlify proxy connection failed. Check debug info for details.', 'assistant');
                 }
+            });
+            
+            // Handle role change
+            userRole.addEventListener('change', function() {
+                logDebug(`User role changed to: ${userRole.value}`);
+                addMessage(`I'll now respond as if you're a ${userRole.value === 'coordinator' ? 'Support Coordinator' : 'NDIS Participant or Carer'}.`, 'assistant');
             });
             
             chatForm.addEventListener('submit', async function(e) {
@@ -288,7 +564,8 @@
                         },
                         body: JSON.stringify({ 
                             message: message,
-                            sessionId: sessionId
+                            sessionId: sessionId,
+                            userRole: userRole.value
                         })
                     });
                     
@@ -325,7 +602,14 @@
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('message');
                 messageDiv.classList.add(sender === 'user' ? 'user-message' : 'assistant-message');
-                messageDiv.textContent = text;
+                
+                if (sender === 'assistant') {
+                    // Format the message content to handle tables
+                    const formattedContent = formatMessageContent(text);
+                    messageDiv.innerHTML = formattedContent;
+                } else {
+                    messageDiv.textContent = text;
+                }
                 
                 chatMessages.appendChild(messageDiv);
                 

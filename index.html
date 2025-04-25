@@ -26,6 +26,71 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .shape {
+            position: absolute;
+            opacity: 0.05;
+            filter: blur(40px);
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, #5c946e, #2d3142);
+            border-radius: 50%;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(45deg, #4f5d75, #5c946e);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            top: 60%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+        
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #2d3142, #4f5d75);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            bottom: 10%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            33% {
+                transform: translate(30px, -50px) rotate(10deg) scale(1.05);
+            }
+            66% {
+                transform: translate(-20px, 20px) rotate(-5deg) scale(0.95);
+            }
+            100% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
         }
         
         .app-container {
@@ -36,6 +101,8 @@
             margin: 0 auto;
             padding: 20px;
             width: 100%;
+            position: relative;
+            z-index: 1;
         }
         
         .header {
@@ -53,6 +120,30 @@
         .header p {
             color: #aaa;
             font-size: 1.2rem;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--medium-bg);
+            color: var(--text-color);
+            border: 1px solid #444;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .theme-toggle:hover {
+            background-color: var(--light-bg);
+            transform: rotate(30deg);
         }
         
         /* Onboarding Form Styles */
@@ -120,6 +211,7 @@
             font-weight: 500;
             margin-bottom: 8px;
             display: block;
+            color: var(--text-color);
         }
         
         .form-control {
@@ -137,6 +229,10 @@
             box-shadow: 0 0 0 0.25rem rgba(92, 148, 110, 0.25);
         }
         
+        .form-control::placeholder {
+            color: #888;
+        }
+        
         .form-select {
             background-color: var(--light-bg);
             border: 1px solid #444;
@@ -149,6 +245,10 @@
             background-color: #3a3a3a;
             border-color: var(--accent-color);
             box-shadow: 0 0 0 0.25rem rgba(92, 148, 110, 0.25);
+        }
+        
+        .form-check-label {
+            color: var(--text-color);
         }
         
         .btn-nav {
@@ -239,6 +339,78 @@
             margin-top: 10px;
         }
         
+        /* File Upload Styles */
+        .file-upload {
+            margin-bottom: 25px;
+        }
+        
+        .file-upload-label {
+            display: block;
+            background-color: var(--light-bg);
+            border: 2px dashed #555;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-upload-label:hover {
+            border-color: var(--accent-color);
+            background-color: rgba(92, 148, 110, 0.05);
+        }
+        
+        .file-upload-label i {
+            font-size: 2rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        
+        .file-upload-label p {
+            margin: 0;
+            color: #aaa;
+        }
+        
+        .file-upload-input {
+            display: none;
+        }
+        
+        .uploaded-files {
+            margin-top: 15px;
+        }
+        
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            background-color: var(--light-bg);
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+        }
+        
+        .uploaded-file i {
+            font-size: 1.2rem;
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+        
+        .uploaded-file-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .uploaded-file-remove {
+            color: #888;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .uploaded-file-remove:hover {
+            color: #ff6b6b;
+        }
+        
         /* Chat Interface Styles */
         .chat-container {
             display: none;
@@ -283,6 +455,29 @@
         
         .user-profile i {
             color: var(--accent-color);
+        }
+        
+        .chat-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-action-button {
+            background-color: rgba(0, 0, 0, 0.2);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .chat-action-button:hover {
+            background-color: rgba(0, 0, 0, 0.4);
         }
         
         .chat-messages {
@@ -335,6 +530,31 @@
             background-color: rgba(255, 255, 255, 0.08);
         }
         
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .suggestion-chip {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            border: 1px solid #444;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .suggestion-chip:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
         .chat-input {
             padding: 20px;
             background-color: var(--light-bg);
@@ -364,6 +584,31 @@
             outline: none;
         }
         
+        .input-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: 10px;
+        }
+        
+        .input-action-button {
+            background-color: var(--medium-bg);
+            border: 1px solid #444;
+            color: #aaa;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .input-action-button:hover {
+            background-color: var(--light-bg);
+            color: white;
+        }
+        
         .send-button {
             background-color: var(--accent-color);
             border: none;
@@ -374,7 +619,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: 10px;
             cursor: pointer;
             transition: all 0.3s;
         }
@@ -403,6 +647,227 @@
         
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+        
+        /* File Upload in Chat */
+        .chat-file-upload {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background-color: var(--medium-bg);
+            border-radius: 12px;
+            box-shadow: var(--box-shadow);
+            padding: 15px;
+            width: 300px;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .chat-file-upload.active {
+            display: block;
+        }
+        
+        .chat-file-upload-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .chat-file-upload-title {
+            font-weight: 500;
+        }
+        
+        .chat-file-upload-close {
+            color: #888;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .chat-file-upload-close:hover {
+            color: white;
+        }
+        
+        /* Resources Panel */
+        .resources-panel {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--medium-bg);
+            border-radius: 12px;
+            box-shadow: var(--box-shadow);
+            padding: 15px;
+            width: 300px;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .resources-panel.active {
+            display: block;
+        }
+        
+        .resources-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .resources-title {
+            font-weight: 500;
+        }
+        
+        .resources-close {
+            color: #888;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .resources-close:hover {
+            color: white;
+        }
+        
+        .resource-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        
+        .resource-item:hover {
+            background-color: var(--light-bg);
+        }
+        
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--light-bg);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+        
+        .resource-icon i {
+            color: var(--accent-color);
+        }
+        
+        .resource-info {
+            flex: 1;
+        }
+        
+        .resource-title {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .resource-description {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        /* Export Chat Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background-color: var(--medium-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 90%;
+            max-width: 500px;
+            animation: zoomIn 0.3s ease-in-out;
+        }
+        
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-weight: 500;
+        }
+        
+        .modal-close {
+            color: #888;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .modal-close:hover {
+            color: white;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #444;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .btn-modal {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            border: none;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #4a7d5a;
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid #555;
+            color: #ccc;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #333;
+            color: white;
         }
         
         /* Debug Section Styles */
@@ -483,6 +948,95 @@
             color: white;
         }
         
+        /* Light Theme Styles */
+        body.light-theme {
+            --dark-bg: #f5f5f5;
+            --medium-bg: #ffffff;
+            --light-bg: #f0f0f0;
+            --text-color: #333333;
+            --secondary-color: #5c946e;
+            --box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        body.light-theme .shape-1 {
+            background: linear-gradient(45deg, #5c946e, #4f5d75);
+        }
+        
+        body.light-theme .shape-2 {
+            background: linear-gradient(45deg, #4f5d75, #2d3142);
+        }
+        
+        body.light-theme .shape-3 {
+            background: linear-gradient(45deg, #2d3142, #5c946e);
+        }
+        
+        body.light-theme .user-message {
+            background-color: #5c946e;
+        }
+        
+        body.light-theme .assistant-message {
+            background-color: #e9e9e9;
+        }
+        
+        body.light-theme .chat-header {
+            background-color: #5c946e;
+        }
+        
+        body.light-theme .debug-header {
+            background-color: #5c946e;
+        }
+        
+        body.light-theme .form-control,
+        body.light-theme .form-select {
+            background-color: #ffffff;
+            border-color: #ddd;
+            color: #333;
+        }
+        
+        body.light-theme .form-control::placeholder {
+            color: #999;
+        }
+        
+        body.light-theme .form-control:focus,
+        body.light-theme .form-select:focus {
+            background-color: #ffffff;
+            border-color: #5c946e;
+        }
+        
+        body.light-theme .suggestion-chip {
+            background-color: #e9e9e9;
+            border-color: #ddd;
+            color: #333;
+        }
+        
+        body.light-theme .suggestion-chip:hover {
+            background-color: #5c946e;
+            border-color: #5c946e;
+            color: white;
+        }
+        
+        body.light-theme .message-input {
+            background-color: #ffffff;
+            border-color: #ddd;
+            color: #333;
+        }
+        
+        body.light-theme .input-action-button {
+            background-color: #f0f0f0;
+            border-color: #ddd;
+            color: #666;
+        }
+        
+        body.light-theme .input-action-button:hover {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        
+        body.light-theme .chat-input {
+            background-color: #f0f0f0;
+            border-top-color: #ddd;
+        }
+        
         @media (max-width: 768px) {
             .app-container {
                 padding: 10px;
@@ -507,10 +1061,26 @@
             .message {
                 max-width: 90%;
             }
+            
+            .suggestion-chips {
+                overflow-x: auto;
+                padding-bottom: 10px;
+                flex-wrap: nowrap;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="animated-background">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-sun"></i>
+    </div>
+    
     <div class="app-container">
         <div class="header">
             <h1>Care Mate</h1>
@@ -523,6 +1093,7 @@
                 <div class="step-dot active" data-step="1"></div>
                 <div class="step-dot" data-step="2"></div>
                 <div class="step-dot" data-step="3"></div>
+                <div class="step-dot" data-step="4"></div>
             </div>
             
             <!-- Step 1: Select Role -->
@@ -577,6 +1148,11 @@
                     </div>
                     
                     <div class="form-group">
+                        <label for="diagnosis" class="form-label">Diagnosis (if known)</label>
+                        <input type="text" class="form-control" id="diagnosis" placeholder="Enter your diagnosis if known">
+                    </div>
+                    
+                    <div class="form-group">
                         <label for="planStartDate" class="form-label">Plan Start Date</label>
                         <input type="date" class="form-control" id="planStartDate">
                     </div>
@@ -603,6 +1179,18 @@
                         <label for="registrationNumber" class="form-label">NDIS Provider Registration Number</label>
                         <input type="text" class="form-control" id="registrationNumber" placeholder="Enter registration number">
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="coordinatorExperience" class="form-label">Years of Experience</label>
+                        <select class="form-select" id="coordinatorExperience">
+                            <option value="" selected disabled>Select experience level</option>
+                            <option value="less-than-1">Less than 1 year</option>
+                            <option value="1-3">1-3 years</option>
+                            <option value="3-5">3-5 years</option>
+                            <option value="5-10">5-10 years</option>
+                            <option value="more-than-10">More than 10 years</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <!-- Plan Manager Fields -->
@@ -621,6 +1209,18 @@
                         <label for="managerRegistration" class="form-label">NDIS Provider Registration Number</label>
                         <input type="text" class="form-control" id="managerRegistration" placeholder="Enter registration number">
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="managerExperience" class="form-label">Years of Experience</label>
+                        <select class="form-select" id="managerExperience">
+                            <option value="" selected disabled>Select experience level</option>
+                            <option value="less-than-1">Less than 1 year</option>
+                            <option value="1-3">1-3 years</option>
+                            <option value="3-5">3-5 years</option>
+                            <option value="5-10">5-10 years</option>
+                            <option value="more-than-10">More than 10 years</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="nav-buttons">
@@ -629,10 +1229,165 @@
                 </div>
             </div>
             
-            <!-- Step 3: Preferences -->
+            <!-- Step 3: Support Information -->
             <div class="onboarding-step" id="step3">
+                <h2 class="step-title">Your Support Information</h2>
+                <p class="text-center mb-4">Tell us about your current support and needs.</p>
+                
+                <!-- Participant Support Fields -->
+                <div id="participantSupportFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="supportLevel" class="form-label">Current Level of Support</label>
+                        <select class="form-select" id="supportLevel">
+                            <option value="" selected disabled>Select support level</option>
+                            <option value="self-managed">Self-Managed</option>
+                            <option value="plan-managed">Plan-Managed</option>
+                            <option value="ndia-managed">NDIA-Managed</option>
+                            <option value="combination">Combination</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="visitPurpose" class="form-label">Primary Purpose of Your Visit</label>
+                        <select class="form-select" id="visitPurpose">
+                            <option value="" selected disabled>Select primary purpose</option>
+                            <option value="understand-plan">Understand my NDIS plan</option>
+                            <option value="find-providers">Find service providers</option>
+                            <option value="manage-budget">Manage my budget</option>
+                            <option value="create-documents">Create or understand documents</option>
+                            <option value="prepare-review">Prepare for plan review</option>
+                            <option value="general-support">General support and guidance</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Do you currently have a Support Coordinator?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="hasCoordinator" id="hasCoordinatorYes" value="yes">
+                            <label class="form-check-label" for="hasCoordinatorYes">
+                                Yes
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="hasCoordinator" id="hasCoordinatorNo" value="no">
+                            <label class="form-check-label" for="hasCoordinatorNo">
+                                No
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Coordinator Support Fields -->
+                <div id="coordinatorSupportFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="coordinatorSpecialty" class="form-label">Areas of Specialty</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="physical-disability" id="physicalDisability">
+                            <label class="form-check-label" for="physicalDisability">
+                                Physical Disability
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="intellectual-disability" id="intellectualDisability">
+                            <label class="form-check-label" for="intellectualDisability">
+                                Intellectual Disability
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="autism" id="autism">
+                            <label class="form-check-label" for="autism">
+                                Autism
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="psychosocial" id="psychosocial">
+                            <label class="form-check-label" for="psychosocial">
+                                Psychosocial Disability
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="sensory" id="sensory">
+                            <label class="form-check-label" for="sensory">
+                                Sensory Disability
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="coordinatorPurpose" class="form-label">Primary Purpose of Your Visit</label>
+                        <select class="form-select" id="coordinatorPurpose">
+                            <option value="" selected disabled>Select primary purpose</option>
+                            <option value="document-generation">Document Generation</option>
+                            <option value="plan-management">Plan Management Assistance</option>
+                            <option value="provider-research">Provider Research</option>
+                            <option value="ndis-updates">NDIS Updates and Information</option>
+                            <option value="general-support">General Support and Guidance</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="participantCount" class="form-label">Number of Participants You Support</label>
+                        <select class="form-select" id="participantCount">
+                            <option value="" selected disabled>Select range</option>
+                            <option value="1-10">1-10</option>
+                            <option value="11-30">11-30</option>
+                            <option value="31-50">31-50</option>
+                            <option value="51-100">51-100</option>
+                            <option value="more-than-100">More than 100</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Plan Manager Support Fields -->
+                <div id="managerSupportFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="managerPurpose" class="form-label">Primary Purpose of Your Visit</label>
+                        <select class="form-select" id="managerPurpose">
+                            <option value="" selected disabled>Select primary purpose</option>
+                            <option value="invoice-processing">Invoice Processing Information</option>
+                            <option value="budget-tracking">Budget Tracking Assistance</option>
+                            <option value="reporting">Reporting Guidance</option>
+                            <option value="ndis-updates">NDIS Updates and Information</option>
+                            <option value="general-support">General Support and Guidance</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="managerParticipantCount" class="form-label">Number of Participants You Support</label>
+                        <select class="form-select" id="managerParticipantCount">
+                            <option value="" selected disabled>Select range</option>
+                            <option value="1-10">1-10</option>
+                            <option value="11-30">11-30</option>
+                            <option value="31-50">31-50</option>
+                            <option value="51-100">51-100</option>
+                            <option value="more-than-100">More than 100</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button class="btn btn-nav btn-back" id="step3Back">Back</button>
+                    <button class="btn btn-nav" id="step3Next">Continue</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Document Upload & Preferences -->
+            <div class="onboarding-step" id="step4">
                 <h2 class="step-title">Almost there!</h2>
-                <p class="text-center mb-4">Let us know your preferences to enhance your experience.</p>
+                <p class="text-center mb-4">Upload relevant documents and set your preferences.</p>
+                
+                <div class="file-upload">
+                    <label for="documentUpload" class="file-upload-label">
+                        <i class="fas fa-file-upload"></i>
+                        <p>Drag and drop files here or click to browse</p>
+                        <p class="small text-muted mt-2">Supported formats: PDF, DOC, DOCX (Max 10MB)</p>
+                    </label>
+                    <input type="file" id="documentUpload" class="file-upload-input" multiple accept=".pdf,.doc,.docx">
+                    
+                    <div class="uploaded-files" id="uploadedFiles">
+                        <!-- Uploaded files will appear here -->
+                    </div>
+                </div>
                 
                 <div class="form-group">
                     <label for="communicationPreference" class="form-label">Preferred Communication Style</label>
@@ -683,8 +1438,8 @@
                 </div>
                 
                 <div class="nav-buttons">
-                    <button class="btn btn-nav btn-back" id="step3Back">Back</button>
-                    <button class="btn btn-nav" id="step3Complete">Start Using Care Mate</button>
+                    <button class="btn btn-nav btn-back" id="step4Back">Back</button>
+                    <button class="btn btn-nav" id="step4Complete">Start Using Care Mate</button>
                 </div>
             </div>
         </div>
@@ -700,11 +1455,27 @@
                     <i class="fas fa-user-circle"></i>
                     <span id="userRoleDisplay">NDIS Participant</span>
                 </div>
+                <div class="chat-actions">
+                    <button class="chat-action-button" id="resourcesButton" title="NDIS Resources">
+                        <i class="fas fa-book"></i>
+                    </button>
+                    <button class="chat-action-button" id="exportChatButton" title="Export Chat">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
             </div>
             
             <div class="chat-messages" id="chatMessages">
                 <div class="message assistant-message">
                     Hello! I'm Care Mate, your NDIS assistant. How can I help you today?
+                </div>
+                
+                <div class="suggestion-chips">
+                    <div class="suggestion-chip">Help me manage my NDIS plan</div>
+                    <div class="suggestion-chip">Find service providers</div>
+                    <div class="suggestion-chip">Understand my funding</div>
+                    <div class="suggestion-chip">Create NDIS documents</div>
+                    <div class="suggestion-chip">Prepare for plan review</div>
                 </div>
             </div>
             
@@ -716,9 +1487,141 @@
             <div class="chat-input">
                 <div class="input-group">
                     <input type="text" id="userInput" class="message-input" placeholder="Type your message here...">
-                    <button id="sendButton" class="send-button">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
+                    <div class="input-actions">
+                        <button class="input-action-button" id="uploadButton" title="Upload Document">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button class="send-button" id="sendButton">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- File Upload Panel -->
+                <div class="chat-file-upload" id="chatFileUpload">
+                    <div class="chat-file-upload-header">
+                        <div class="chat-file-upload-title">Upload Document</div>
+                        <div class="chat-file-upload-close" id="closeUpload">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                    <div class="file-upload">
+                        <label for="chatDocumentUpload" class="file-upload-label">
+                            <i class="fas fa-file-upload"></i>
+                            <p>Click to browse files</p>
+                            <p class="small text-muted mt-2">PDF, DOC, DOCX (Max 10MB)</p>
+                        </label>
+                        <input type="file" id="chatDocumentUpload" class="file-upload-input" multiple accept=".pdf,.doc,.docx">
+                    </div>
+                    <div class="uploaded-files" id="chatUploadedFiles">
+                        <!-- Uploaded files will appear here -->
+                    </div>
+                    <button class="btn btn-nav w-100 mt-3" id="sendFilesButton">Send Files</button>
+                </div>
+            </div>
+            
+            <!-- Resources Panel -->
+            <div class="resources-panel" id="resourcesPanel">
+                <div class="resources-header">
+                    <div class="resources-title">NDIS Resources</div>
+                    <div class="resources-close" id="closeResources">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="resource-info">
+                        <div class="resource-title">NDIS Price Guide</div>
+                        <div class="resource-description">Current pricing for NDIS supports</div>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="resource-info">
+                        <div class="resource-title">NDIS Participant Handbook</div>
+                        <div class="resource-description">Guide to understanding the NDIS</div>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="resource-info">
+                        <div class="resource-title">Plan Management Guide</div>
+                        <div class="resource-description">How to manage your NDIS funding</div>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="resource-info">
+                        <div class="resource-title">Provider Finder</div>
+                        <div class="resource-description">Find registered NDIS providers</div>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div class="resource-info">
+                        <div class="resource-title">Service Agreement Template</div>
+                        <div class="resource-description">Template for provider agreements</div>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="resource-info">
+                        <div class="resource-title">Plan Review Checklist</div>
+                        <div class="resource-description">Prepare for your plan review</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Export Chat Modal -->
+        <div class="modal-overlay" id="exportModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">Export Chat History</div>
+                    <div class="modal-close" id="closeExportModal">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="exportFormat" class="form-label">Export Format</label>
+                        <select class="form-select" id="exportFormat">
+                            <option value="pdf">PDF Document</option>
+                            <option value="txt">Text File</option>
+                            <option value="html">HTML Document</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Include</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeTimestamps" checked>
+                            <label class="form-check-label" for="includeTimestamps">
+                                Timestamps
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeUserInfo" checked>
+                            <label class="form-check-label" for="includeUserInfo">
+                                User Information
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary btn-modal" id="cancelExport">Cancel</button>
+                    <button class="btn btn-primary btn-modal" id="confirmExport">Export</button>
                 </div>
             </div>
         </div>
@@ -744,16 +1647,33 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Theme Toggle
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('light-theme');
+                
+                if (body.classList.contains('light-theme')) {
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                } else {
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                }
+            });
+            
             // Onboarding Elements
             const onboardingContainer = document.getElementById('onboardingContainer');
             const step1 = document.getElementById('step1');
             const step2 = document.getElementById('step2');
             const step3 = document.getElementById('step3');
+            const step4 = document.getElementById('step4');
             const step1Next = document.getElementById('step1Next');
             const step2Back = document.getElementById('step2Back');
             const step2Next = document.getElementById('step2Next');
             const step3Back = document.getElementById('step3Back');
-            const step3Complete = document.getElementById('step3Complete');
+            const step3Next = document.getElementById('step3Next');
+            const step4Back = document.getElementById('step4Back');
+            const step4Complete = document.getElementById('step4Complete');
             const roleCards = document.querySelectorAll('.role-card');
             const stepDots = document.querySelectorAll('.step-dot');
             
@@ -761,6 +1681,15 @@
             const participantFields = document.getElementById('participantFields');
             const coordinatorFields = document.getElementById('coordinatorFields');
             const managerFields = document.getElementById('managerFields');
+            const participantSupportFields = document.getElementById('participantSupportFields');
+            const coordinatorSupportFields = document.getElementById('coordinatorSupportFields');
+            const managerSupportFields = document.getElementById('managerSupportFields');
+            
+            // File Upload Elements
+            const documentUpload = document.getElementById('documentUpload');
+            const uploadedFiles = document.getElementById('uploadedFiles');
+            const chatDocumentUpload = document.getElementById('chatDocumentUpload');
+            const chatUploadedFiles = document.getElementById('chatUploadedFiles');
             
             // Chat Elements
             const chatContainer = document.getElementById('chatContainer');
@@ -769,6 +1698,26 @@
             const chatMessages = document.getElementById('chatMessages');
             const loading = document.getElementById('loading');
             const userRoleDisplay = document.getElementById('userRoleDisplay');
+            const suggestionChips = document.querySelectorAll('.suggestion-chip');
+            
+            // Chat File Upload
+            const uploadButton = document.getElementById('uploadButton');
+            const chatFileUpload = document.getElementById('chatFileUpload');
+            const closeUpload = document.getElementById('closeUpload');
+            const sendFilesButton = document.getElementById('sendFilesButton');
+            
+            // Resources Panel
+            const resourcesButton = document.getElementById('resourcesButton');
+            const resourcesPanel = document.getElementById('resourcesPanel');
+            const closeResources = document.getElementById('closeResources');
+            const resourceItems = document.querySelectorAll('.resource-item');
+            
+            // Export Chat Modal
+            const exportChatButton = document.getElementById('exportChatButton');
+            const exportModal = document.getElementById('exportModal');
+            const closeExportModal = document.getElementById('closeExportModal');
+            const cancelExport = document.getElementById('cancelExport');
+            const confirmExport = document.getElementById('confirmExport');
             
             // Debug Elements
             const debug = document.getElementById('debug');
@@ -784,17 +1733,27 @@
                 role: '',
                 name: '',
                 ndisNumber: '',
+                diagnosis: '',
                 companyName: '',
                 registrationNumber: '',
+                experience: '',
                 planDates: {
                     start: '',
                     end: ''
+                },
+                support: {
+                    level: '',
+                    hasCoordinator: '',
+                    purpose: '',
+                    specialty: [],
+                    participantCount: ''
                 },
                 preferences: {
                     communicationStyle: 'concise',
                     assistanceAreas: []
                 },
-                additionalInfo: ''
+                additionalInfo: '',
+                uploadedFiles: []
             };
             
             // Generate a unique session ID for this chat session
@@ -859,22 +1818,40 @@
                 if (userProfile.role === 'participant') {
                     userProfile.name = document.getElementById('participantName').value;
                     userProfile.ndisNumber = document.getElementById('ndisNumber').value;
+                    userProfile.diagnosis = document.getElementById('diagnosis').value;
                     userProfile.planDates.start = document.getElementById('planStartDate').value;
                     userProfile.planDates.end = document.getElementById('planEndDate').value;
                 } else if (userProfile.role === 'coordinator') {
                     userProfile.name = document.getElementById('coordinatorName').value;
                     userProfile.companyName = document.getElementById('companyName').value;
                     userProfile.registrationNumber = document.getElementById('registrationNumber').value;
+                    userProfile.experience = document.getElementById('coordinatorExperience').value;
                 } else if (userProfile.role === 'manager') {
                     userProfile.name = document.getElementById('managerName').value;
                     userProfile.companyName = document.getElementById('managerCompany').value;
                     userProfile.registrationNumber = document.getElementById('managerRegistration').value;
+                    userProfile.experience = document.getElementById('managerExperience').value;
                 }
                 
                 step2.classList.remove('active');
                 step3.classList.add('active');
                 stepDots[1].classList.remove('active');
                 stepDots[2].classList.add('active');
+                
+                // Show support fields based on selected role
+                if (userProfile.role === 'participant') {
+                    participantSupportFields.style.display = 'block';
+                    coordinatorSupportFields.style.display = 'none';
+                    managerSupportFields.style.display = 'none';
+                } else if (userProfile.role === 'coordinator') {
+                    participantSupportFields.style.display = 'none';
+                    coordinatorSupportFields.style.display = 'block';
+                    managerSupportFields.style.display = 'none';
+                } else if (userProfile.role === 'manager') {
+                    participantSupportFields.style.display = 'none';
+                    coordinatorSupportFields.style.display = 'none';
+                    managerSupportFields.style.display = 'block';
+                }
             });
             
             step3Back.addEventListener('click', function() {
@@ -884,14 +1861,58 @@
                 stepDots[1].classList.add('active');
             });
             
-            step3Complete.addEventListener('click', function() {
+            step3Next.addEventListener('click', function() {
                 // Collect data from step 3
+                if (userProfile.role === 'participant') {
+                    userProfile.support.level = document.getElementById('supportLevel').value;
+                    userProfile.support.purpose = document.getElementById('visitPurpose').value;
+                    
+                    const hasCoordinatorRadios = document.querySelectorAll('input[name="hasCoordinator"]');
+                    for (const radio of hasCoordinatorRadios) {
+                        if (radio.checked) {
+                            userProfile.support.hasCoordinator = radio.value;
+                            break;
+                        }
+                    }
+                } else if (userProfile.role === 'coordinator') {
+                    userProfile.support.purpose = document.getElementById('coordinatorPurpose').value;
+                    userProfile.support.participantCount = document.getElementById('participantCount').value;
+                    
+                    // Collect specialty areas
+                    userProfile.support.specialty = [];
+                    document.querySelectorAll('#coordinatorSupportFields input[type="checkbox"]:checked').forEach(checkbox => {
+                        userProfile.support.specialty.push(checkbox.value);
+                    });
+                } else if (userProfile.role === 'manager') {
+                    userProfile.support.purpose = document.getElementById('managerPurpose').value;
+                    userProfile.support.participantCount = document.getElementById('managerParticipantCount').value;
+                }
+                
+                step3.classList.remove('active');
+                step4.classList.add('active');
+                stepDots[2].classList.remove('active');
+                stepDots[3].classList.add('active');
+            });
+            
+            step4Back.addEventListener('click', function() {
+                step4.classList.remove('active');
+                step3.classList.add('active');
+                stepDots[3].classList.remove('active');
+                stepDots[2].classList.add('active');
+            });
+            
+            step4Complete.addEventListener('click', function() {
+                // Collect data from step 4
                 userProfile.preferences.communicationStyle = document.getElementById('communicationPreference').value;
                 
                 // Collect selected assistance areas
                 userProfile.preferences.assistanceAreas = [];
                 document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                    userProfile.preferences.assistanceAreas.push(checkbox.value);
+                    if (checkbox.id === 'planManagement' || checkbox.id === 'documentation' || 
+                        checkbox.id === 'serviceProviders' || checkbox.id === 'funding' || 
+                        checkbox.id === 'goals') {
+                        userProfile.preferences.assistanceAreas.push(checkbox.value);
+                    }
                 });
                 
                 userProfile.additionalInfo = document.getElementById('additionalInfo').value;
@@ -916,6 +1937,173 @@
                 sendProfileToAI();
             });
             
+            // File Upload Handling
+            documentUpload.addEventListener('change', function(e) {
+                handleFileUpload(e.target.files, uploadedFiles, userProfile.uploadedFiles);
+            });
+            
+            chatDocumentUpload.addEventListener('change', function(e) {
+                handleFileUpload(e.target.files, chatUploadedFiles, []);
+            });
+            
+            function handleFileUpload(files, container, storage) {
+                if (!files.length) return;
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    
+                    // Check file size (max 10MB)
+                    if (file.size > 10 * 1024 * 1024) {
+                        alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+                        continue;
+                    }
+                    
+                    // Check file type
+                    if (!['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)) {
+                        alert(`File ${file.name} is not supported. Please upload PDF or DOC files.`);
+                        continue;
+                    }
+                    
+                    // Add file to storage if provided
+                    if (storage) {
+                        storage.push({
+                            name: file.name,
+                            type: file.type,
+                            size: file.size
+                        });
+                    }
+                    
+                    // Create file element
+                    const fileElement = document.createElement('div');
+                    fileElement.className = 'uploaded-file';
+                    
+                    // Set icon based on file type
+                    let icon = 'fa-file';
+                    if (file.type === 'application/pdf') {
+                        icon = 'fa-file-pdf';
+                    } else if (file.type.includes('word')) {
+                        icon = 'fa-file-word';
+                    }
+                    
+                    fileElement.innerHTML = `
+                        <i class="fas ${icon}"></i>
+                        <div class="uploaded-file-name">${file.name}</div>
+                        <div class="uploaded-file-remove" data-name="${file.name}">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    `;
+                    
+                    container.appendChild(fileElement);
+                    
+                    // Add remove event listener
+                    fileElement.querySelector('.uploaded-file-remove').addEventListener('click', function() {
+                        const fileName = this.dataset.name;
+                        
+                        // Remove from storage if provided
+                        if (storage) {
+                            const index = storage.findIndex(f => f.name === fileName);
+                            if (index !== -1) {
+                                storage.splice(index, 1);
+                            }
+                        }
+                        
+                        // Remove element
+                        fileElement.remove();
+                    });
+                }
+            }
+            
+            // Chat File Upload Toggle
+            uploadButton.addEventListener('click', function() {
+                chatFileUpload.classList.toggle('active');
+            });
+            
+            closeUpload.addEventListener('click', function() {
+                chatFileUpload.classList.remove('active');
+            });
+            
+            sendFilesButton.addEventListener('click', function() {
+                // Get all files in the chat upload container
+                const fileElements = chatUploadedFiles.querySelectorAll('.uploaded-file');
+                
+                if (fileElements.length === 0) {
+                    alert('Please upload at least one file.');
+                    return;
+                }
+                
+                // Create a message about the uploaded files
+                let fileNames = [];
+                fileElements.forEach(el => {
+                    fileNames.push(el.querySelector('.uploaded-file-name').textContent);
+                });
+                
+                const message = `I've uploaded the following files: ${fileNames.join(', ')}`;
+                
+                // Add user message to chat
+                addMessage(message, 'user');
+                
+                // Clear the upload panel
+                chatUploadedFiles.innerHTML = '';
+                chatFileUpload.classList.remove('active');
+                
+                // Send message to AI
+                sendMessageToAI(message);
+            });
+            
+            // Resources Panel Toggle
+            resourcesButton.addEventListener('click', function() {
+                resourcesPanel.classList.toggle('active');
+            });
+            
+            closeResources.addEventListener('click', function() {
+                resourcesPanel.classList.remove('active');
+            });
+            
+            // Resource Item Click
+            resourceItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const resourceTitle = this.querySelector('.resource-title').textContent;
+                    const message = `I'd like to learn more about the "${resourceTitle}"`;
+                    
+                    // Add user message to chat
+                    addMessage(message, 'user');
+                    
+                    // Close the resources panel
+                    resourcesPanel.classList.remove('active');
+                    
+                    // Send message to AI
+                    sendMessageToAI(message);
+                });
+            });
+            
+            // Export Chat Modal
+            exportChatButton.addEventListener('click', function() {
+                exportModal.classList.add('active');
+            });
+            
+            closeExportModal.addEventListener('click', function() {
+                exportModal.classList.remove('active');
+            });
+            
+            cancelExport.addEventListener('click', function() {
+                exportModal.classList.remove('active');
+            });
+            
+            confirmExport.addEventListener('click', function() {
+                const format = document.getElementById('exportFormat').value;
+                const includeTimestamps = document.getElementById('includeTimestamps').checked;
+                const includeUserInfo = document.getElementById('includeUserInfo').checked;
+                
+                // In a real implementation, this would generate and download the chat history
+                // For now, we'll just show a message
+                alert(`Chat exported as ${format.toUpperCase()} with${includeTimestamps ? '' : 'out'} timestamps and ${includeUserInfo ? 'with' : 'without'} user information.`);
+                
+                exportModal.classList.remove('active');
+                
+                // Add a message to the chat
+                addMessage(`I've exported our conversation as a ${format.toUpperCase()} file.`, 'assistant');
+            });
+            
             // Send user profile to AI
             function sendProfileToAI() {
                 loading.style.display = 'block';
@@ -923,15 +2111,64 @@
                 let profileSummary = `I'm ${userProfile.name}, a ${getRoleDisplayName(userProfile.role)}`;
                 
                 if (userProfile.role === 'participant') {
-                    profileSummary += ` with NDIS number ${userProfile.ndisNumber}. My plan runs from ${formatDate(userProfile.planDates.start)} to ${formatDate(userProfile.planDates.end)}.`;
+                    profileSummary += ` with NDIS number ${userProfile.ndisNumber}.`;
+                    
+                    if (userProfile.diagnosis) {
+                        profileSummary += ` My diagnosis is ${userProfile.diagnosis}.`;
+                    }
+                    
+                    if (userProfile.planDates.start && userProfile.planDates.end) {
+                        profileSummary += ` My plan runs from ${formatDate(userProfile.planDates.start)} to ${formatDate(userProfile.planDates.end)}.`;
+                    }
+                    
+                    if (userProfile.support.level) {
+                        profileSummary += ` My plan is ${userProfile.support.level}.`;
+                    }
+                    
+                    if (userProfile.support.hasCoordinator) {
+                        profileSummary += ` I ${userProfile.support.hasCoordinator === 'yes' ? 'do' : 'do not'} have a Support Coordinator.`;
+                    }
                 } else {
-                    profileSummary += ` from ${userProfile.companyName} with registration number ${userProfile.registrationNumber}.`;
+                    profileSummary += ` from ${userProfile.companyName}`;
+                    
+                    if (userProfile.registrationNumber) {
+                        profileSummary += ` with registration number ${userProfile.registrationNumber}`;
+                    }
+                    
+                    profileSummary += '.';
+                    
+                    if (userProfile.experience) {
+                        profileSummary += ` I have ${userProfile.experience.replace('-', ' to ').replace('more-than-', 'more than ')} years of experience.`;
+                    }
+                    
+                    if (userProfile.support.participantCount) {
+                        profileSummary += ` I support ${userProfile.support.participantCount.replace('-', ' to ').replace('more-than-', 'more than ')} participants.`;
+                    }
+                    
+                    if (userProfile.support.specialty && userProfile.support.specialty.length > 0) {
+                        profileSummary += ` My areas of specialty include: ${userProfile.support.specialty.join(', ')}.`;
+                    }
                 }
                 
-                profileSummary += ` I prefer ${userProfile.preferences.communicationStyle} communication and need help with: ${userProfile.preferences.assistanceAreas.join(', ')}.`;
+                if (userProfile.support.purpose) {
+                    profileSummary += ` I'm here today primarily for ${userProfile.support.purpose.replace(/-/g, ' ')}.`;
+                }
+                
+                if (userProfile.preferences.communicationStyle) {
+                    profileSummary += ` I prefer ${userProfile.preferences.communicationStyle} communication.`;
+                }
+                
+                if (userProfile.preferences.assistanceAreas && userProfile.preferences.assistanceAreas.length > 0) {
+                    profileSummary += ` I need help with: ${userProfile.preferences.assistanceAreas.join(', ')}.`;
+                }
                 
                 if (userProfile.additionalInfo) {
                     profileSummary += ` Additional info: ${userProfile.additionalInfo}`;
+                }
+                
+                if (userProfile.uploadedFiles && userProfile.uploadedFiles.length > 0) {
+                    const fileNames = userProfile.uploadedFiles.map(f => f.name);
+                    profileSummary += ` I've uploaded the following files: ${fileNames.join(', ')}.`;
                 }
                 
                 logDebug(`Sending profile summary: ${profileSummary}`);
@@ -983,6 +2220,26 @@
                 const date = new Date(dateString);
                 return date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
             }
+            
+            // Suggestion Chips
+            suggestionChips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    const message = this.textContent;
+                    
+                    // Add user message to chat
+                    addMessage(message, 'user');
+                    userInput.value = '';
+                    
+                    // Send message to AI
+                    sendMessageToAI(message);
+                    
+                    // Remove suggestion chips after first interaction
+                    const suggestionsContainer = document.querySelector('.suggestion-chips');
+                    if (suggestionsContainer) {
+                        suggestionsContainer.remove();
+                    }
+                });
+            });
             
             // Toggle debug info
             toggleDebug.addEventListener('click', function() {
@@ -1067,7 +2324,19 @@
                     return formattedContent;
                 }
                 
-                return content;
+                // Remove markdown formatting
+                let formattedContent = content;
+                
+                // Replace ** bold ** with <strong>bold</strong>
+                formattedContent = formattedContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                // Replace * italic * with <em>italic</em>
+                formattedContent = formattedContent.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                
+                // Replace ### headers with <h3>headers</h3>
+                formattedContent = formattedContent.replace(/###\s+(.*?)(?:\n|$)/g, '<h3>$1</h3>');
+                
+                return formattedContent;
             }
             
             // Wake up Replit backend
@@ -1105,7 +2374,7 @@
                         body: JSON.stringify({ 
                             message: testMessage,
                             sessionId: sessionId + '_test_direct',
-                            userRole: userProfile.role
+                            userRole: userProfile.role || 'participant'
                         })
                     });
                     
@@ -1142,7 +2411,7 @@
                         body: JSON.stringify({ 
                             message: testMessage,
                             sessionId: sessionId + '_test_proxy',
-                            userRole: userProfile.role
+                            userRole: userProfile.role || 'participant'
                         })
                     });
                     
@@ -1181,6 +2450,17 @@
                 addMessage(message, 'user');
                 userInput.value = '';
                 
+                // Send message to AI
+                sendMessageToAI(message);
+                
+                // Remove suggestion chips after first interaction if they still exist
+                const suggestionsContainer = document.querySelector('.suggestion-chips');
+                if (suggestionsContainer) {
+                    suggestionsContainer.remove();
+                }
+            }
+            
+            function sendMessageToAI(message) {
                 // Show loading indicator
                 loading.style.display = 'block';
                 
@@ -1198,7 +2478,7 @@
                         body: JSON.stringify({ 
                             message: message,
                             sessionId: sessionId,
-                            userRole: userProfile.role
+                            userRole: userProfile.role || 'participant'
                         })
                     })
                     .then(response => {
@@ -1246,7 +2526,7 @@
                 messageDiv.classList.add(sender === 'user' ? 'user-message' : 'assistant-message');
                 
                 if (sender === 'assistant') {
-                    // Format the message content to handle tables
+                    // Format the message content to handle tables and markdown
                     messageDiv.innerHTML = formatMessageContent(text);
                 } else {
                     messageDiv.textContent = text;

@@ -153,6 +153,9 @@
             const PROXY_URL = '/api/chat';
             const DIRECT_URL = 'https://caremate-ai-backend-ts67450.replit.app/chat';
             
+            // Use direct connection by default since it's working
+            const API_URL = DIRECT_URL;
+            
             // Log debug info
             function logDebug(message) {
                 const timestamp = new Date().toLocaleTimeString();
@@ -263,10 +266,10 @@
                 logDebug(`Sending message: "${message}"`);
                 
                 try {
-                    // Send message to backend through Netlify proxy
-                    logDebug(`Fetching ${PROXY_URL} with message: "${message}"`);
+                    // Send message to backend using the direct URL since it's working
+                    logDebug(`Fetching ${API_URL} with message: "${message}"`);
                     
-                    const response = await fetch(PROXY_URL, {
+                    const response = await fetch(API_URL, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

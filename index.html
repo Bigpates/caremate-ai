@@ -3,28 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Care Mate - Your NDIS Assistant</title>
+    <title>Care Mate - Navigate NDIS with Confidence</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Stripe JS -->
+    <script src="https://js.stripe.com/v3/"></script>
     <style>
         :root {
-            --primary-bg: #1a1a1a;
-            --secondary-bg: #2a2a2a;
-            --accent-color: #4CAF50;
+            /* Modern 2025 Color Palette - Updated for Webflow */
+            --primary-bg: #0A0A0A; /* Off-black as requested */
+            --secondary-bg: #111114;
+            --accent-color: #4eff91;
+            --accent-color-hover: #3dcc74;
+            --accent-glow: rgba(78, 255, 145, 0.15);
             --text-color: #f0f0f0;
-            --input-bg: #333;
-            --border-color: #444;
-            --hover-color: #3a3a3a;
+            --text-color-muted: #a0a0a0;
+            --input-bg: #1a1a20;
+            --border-color: #2a2a30;
+            --hover-color: #1e1e24;
             --shadow-color: rgba(0, 0, 0, 0.3);
-            --error-color: #f44336;
-            --success-color: #4CAF50;
-            --warning-color: #ff9800;
-            --info-color: #2196F3;
+            --card-bg: #15151c;
+            --error-color: #ff4d6d;
+            --success-color: #4eff91;
+            --warning-color: #ffbe0b;
+            --info-color: #3a86ff;
+            
+            /* Glassmorphism Variables */
+            --glass-bg: rgba(21, 21, 31, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --glass-blur: 10px;
+            
+            /* Animation Variables */
+            --transition-fast: 0.2s;
+            --transition-medium: 0.4s;
+            --transition-slow: 0.8s;
+            --cubic-bezier: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
@@ -35,9 +60,16 @@
             flex-direction: column;
             position: relative;
             overflow-x: hidden;
+            line-height: 1.5;
         }
 
-        /* Animated Background */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        /* Animated Background with softer effects */
         .animated-bg {
             position: fixed;
             top: 0;
@@ -50,14 +82,14 @@
 
         .shape {
             position: absolute;
-            opacity: 0.05;
-            filter: blur(40px);
-            animation: float 15s infinite ease-in-out;
+            opacity: 0.04;
+            filter: blur(80px);
+            animation: float 30s infinite ease-in-out;
         }
 
         .shape:nth-child(1) {
-            width: 300px;
-            height: 300px;
+            width: 500px;
+            height: 500px;
             background: var(--accent-color);
             border-radius: 50%;
             top: 20%;
@@ -66,8 +98,8 @@
         }
 
         .shape:nth-child(2) {
-            width: 200px;
-            height: 200px;
+            width: 400px;
+            height: 400px;
             background: var(--info-color);
             border-radius: 30%;
             top: 60%;
@@ -76,13 +108,23 @@
         }
 
         .shape:nth-child(3) {
-            width: 250px;
-            height: 250px;
+            width: 450px;
+            height: 450px;
             background: var(--warning-color);
             border-radius: 40%;
             top: 10%;
             left: 80%;
             animation-delay: 4s;
+        }
+
+        .shape:nth-child(4) {
+            width: 350px;
+            height: 350px;
+            background: var(--error-color);
+            border-radius: 40%;
+            top: 70%;
+            left: 20%;
+            animation-delay: 6s;
         }
 
         @keyframes float {
@@ -97,889 +139,1685 @@
             }
         }
 
-        /* App Layout */
-        .app-container {
-            display: flex;
-            height: 100vh;
-            width: 100%;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            background-color: var(--secondary-bg);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease;
-            z-index: 10;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .new-chat-btn {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .new-chat-btn:hover {
-            background-color: #3d8b40;
-        }
-
-        .folder-section {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .folder-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .folder-title {
-            font-weight: 600;
-            font-size: 14px;
-            color: #aaa;
-        }
-
-        .add-folder-btn {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .folder-list {
-            list-style: none;
-        }
-
-        .folder-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-
-        .folder-item:hover {
-            background-color: var(--hover-color);
-        }
-
-        .folder-item.active {
-            background-color: var(--hover-color);
-            font-weight: 600;
-        }
-
-        .folder-icon {
-            margin-right: 10px;
-            font-size: 16px;
-        }
-
-        .chat-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px 20px;
-        }
-
-        .chat-list-header {
-            margin-bottom: 15px;
-            font-weight: 600;
-            font-size: 14px;
-            color: #aaa;
-        }
-
-        .chat-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 8px;
-            transition: background-color 0.2s;
-            position: relative;
-        }
-
-        .chat-item:hover {
-            background-color: var(--hover-color);
-        }
-
-        .chat-item.active {
-            background-color: var(--hover-color);
-            font-weight: 600;
-        }
-
-        .chat-icon {
-            margin-right: 10px;
-            font-size: 16px;
-            color: #aaa;
-        }
-
-        .chat-title {
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-size: 14px;
-        }
-
-        .chat-actions {
-            display: none;
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .chat-item:hover .chat-actions {
-            display: flex;
-        }
-
-        .chat-action-btn {
-            background: none;
-            border: none;
-            color: #aaa;
-            cursor: pointer;
-            font-size: 14px;
-            margin-left: 5px;
-        }
-
-        .chat-action-btn:hover {
-            color: var(--text-color);
-        }
-
-        .sidebar-footer {
-            padding: 15px 20px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-
-        .user-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-
-        .user-name {
-            font-size: 14px;
-        }
-
-        /* Mobile sidebar toggle */
-        .sidebar-toggle {
-            display: none;
+        /* Navbar with improved animations */
+        .navbar {
             position: fixed;
-            top: 15px;
-            left: 15px;
-            z-index: 100;
-            background-color: var(--secondary-bg);
-            border: none;
-            color: var(--text-color);
-            width: 40px;
-            height: 40px;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 2px 10px var(--shadow-color);
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 2rem;
             display: flex;
-            flex-direction: column;
-            position: relative;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: all var(--transition-medium) var(--cubic-bezier);
+            background: rgba(10, 10, 10, 0);
+            backdrop-filter: blur(0);
         }
 
-        .header {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid var(--border-color);
+        .navbar.scrolled {
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
         }
 
         .logo {
-            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .tagline {
-            font-size: 16px;
-            color: #aaa;
-        }
-
-        /* Onboarding */
-        .onboarding-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .onboarding-card {
-            background-color: var(--secondary-bg);
-            border-radius: 10px;
-            padding: 30px;
-            width: 100%;
-            box-shadow: 0 5px 15px var(--shadow-color);
-        }
-
-        .steps-indicator {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-
-        .step-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--border-color);
-            margin: 0 5px;
-        }
-
-        .step-dot.active {
-            background-color: var(--accent-color);
-        }
-
-        .onboarding-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .onboarding-subtitle {
-            font-size: 16px;
-            color: #aaa;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .role-cards {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .role-card {
-            flex: 1;
-            background-color: var(--input-bg);
-            border: 2px solid transparent;
-            border-radius: 8px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-
-        .role-card:hover {
-            background-color: var(--hover-color);
-        }
-
-        .role-card.selected {
-            border-color: var(--accent-color);
-            background-color: rgba(76, 175, 80, 0.1);
-        }
-
-        .role-icon {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .role-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .role-price {
-            font-size: 14px;
-            color: #aaa;
-            margin-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 15px;
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
+            font-size: 1.5rem;
             color: var(--text-color);
-            font-size: 16px;
+            text-decoration: none;
+            transition: transform var(--transition-fast) var(--cubic-bezier);
         }
 
-        .form-input:focus {
-            outline: none;
-            border-color: var(--accent-color);
+        .logo:hover {
+            transform: scale(1.05);
         }
 
-        .form-row {
+        .logo-icon {
+            color: var(--accent-color);
+            transition: transform var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .logo:hover .logo-icon {
+            transform: rotate(10deg);
+        }
+
+        .nav-links {
             display: flex;
-            gap: 15px;
+            gap: 2rem;
+            list-style: none;
         }
 
-        .form-row .form-group {
-            flex: 1;
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: color var(--transition-fast) ease;
+            padding: 0.5rem 0;
         }
 
-        .checkbox-group {
-            margin-bottom: 20px;
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--accent-color);
+            transition: width var(--transition-fast) var(--cubic-bezier);
         }
 
-        .checkbox-label {
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+
+        .nav-link:hover:after {
+            width: 100%;
+        }
+
+        .nav-buttons {
             display: flex;
+            gap: 1rem;
             align-items: center;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-
-        .checkbox-input {
-            margin-right: 10px;
-            width: 18px;
-            height: 18px;
-            accent-color: var(--accent-color);
-        }
-
-        .button-group {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
         }
 
         .btn {
-            padding: 12px 25px;
-            border-radius: 5px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all var(--transition-fast) var(--cubic-bezier);
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Enhanced button effects */
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.7s var(--cubic-bezier);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #2de370 100%);
+            color: var(--primary-bg);
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2de370 0%, var(--accent-color) 100%);
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 25px var(--accent-glow);
         }
 
         .btn-secondary {
-            background-color: transparent;
+            background-color: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-color);
             color: var(--text-color);
         }
 
         .btn-secondary:hover {
-            background-color: var(--hover-color);
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-            border: none;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #3d8b40;
-        }
-
-        /* Chat Interface */
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .message {
-            max-width: 80%;
-            margin-bottom: 20px;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .message-assistant {
-            align-self: flex-start;
-        }
-
-        .message-user {
-            align-self: flex-end;
-        }
-
-        .message-content {
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px var(--shadow-color);
-            white-space: pre-line;
-        }
-
-        .message-assistant .message-content {
-            background-color: var(--secondary-bg);
-            border-top-left-radius: 0;
-        }
-
-        .message-user .message-content {
-            background-color: var(--accent-color);
-            color: white;
-            border-top-right-radius: 0;
-        }
-
-        .message-time {
-            font-size: 12px;
-            color: #aaa;
-            margin-top: 5px;
-            text-align: right;
-        }
-
-        .typing-indicator {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            align-self: flex-start;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #aaa;
-            border-radius: 50%;
-            margin: 0 2px;
-            animation: typingAnimation 1.5s infinite ease-in-out;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typingAnimation {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        .warning-message {
-            background-color: rgba(255, 152, 0, 0.1);
-            border-left: 4px solid var(--warning-color);
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 5px;
-        }
-
-        .warning-title {
-            color: var(--warning-color);
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .suggestions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
-
-        .suggestion-btn {
-            background-color: var(--secondary-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 10px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .suggestion-btn:hover {
-            background-color: var(--hover-color);
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px) scale(1.03);
             border-color: var(--accent-color);
         }
 
-        .chat-input-container {
-            padding: 20px;
-            border-top: 1px solid var(--border-color);
-            background-color: var(--primary-bg);
+        .btn-icon {
+            margin-right: 0.5rem;
+            transition: transform var(--transition-medium) var(--cubic-bezier);
         }
 
-        .chat-input-wrapper {
-            display: flex;
-            align-items: flex-end;
-            background-color: var(--secondary-bg);
-            border-radius: 10px;
-            padding: 10px 15px;
-            box-shadow: 0 2px 10px var(--shadow-color);
+        .btn:hover .btn-icon {
+            transform: translateY(-2px);
         }
 
-        .chat-input {
-            flex: 1;
+        .mobile-menu-btn {
+            display: none;
             background: none;
             border: none;
             color: var(--text-color);
-            font-size: 16px;
-            min-height: 40px;
-            max-height: 150px;
-            resize: none;
-            padding: 10px 0;
-            outline: none;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
 
-        .chat-input-actions {
+        /* Hero Section with enhanced animations */
+        .hero {
+            min-height: 100vh;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
         }
 
-        .chat-input-btn {
-            background: none;
-            border: none;
-            color: #aaa;
+        .hero-content {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4rem;
+        }
+
+        .hero-text {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            background: linear-gradient(90deg, var(--text-color) 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 1s var(--cubic-bezier) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero-title span {
+            color: var(--accent-color);
+            background: linear-gradient(90deg, var(--accent-color) 0%, #3dcc74 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-color-muted);
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s var(--cubic-bezier) forwards;
+            animation-delay: 0.2s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            animation: fadeInUp 1s var(--cubic-bezier) forwards;
+            animation-delay: 0.4s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero-image {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+            animation: fadeInRight 1s var(--cubic-bezier) forwards;
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            transition: transform var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .hero-image:hover img {
+            transform: translateY(-10px) scale(1.02);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color-muted);
+            font-size: 0.9rem;
+            animation: fadeInUp 1s var(--cubic-bezier) forwards;
+            animation-delay: 0.8s;
+            opacity: 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        .mouse {
+            width: 30px;
+            height: 50px;
+            border: 2px solid var(--text-color-muted);
+            border-radius: 20px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .mouse:after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: var(--text-color-muted);
+            border-radius: 50%;
+            left: 50%;
+            top: 10px;
+            transform: translateX(-50%);
+            animation: scrollMouse 2s infinite;
+        }
+
+        @keyframes scrollMouse {
+            0% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+        }
+
+        /* Sections with improved transitions */
+        .section {
+            padding: 8rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Section transition overlays */
+        .section::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, rgba(10, 10, 10, 0), var(--primary-bg));
+            z-index: 1;
+        }
+
+        .section::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to top, rgba(10, 10, 10, 0), var(--primary-bg));
+            z-index: 1;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .section-title.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-color-muted);
+            margin-bottom: 4rem;
+            text-align: center;
+            max-width: 700px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all var(--transition-medium) var(--cubic-bezier);
+            transition-delay: 0.1s;
+        }
+
+        .section-subtitle.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Why Care Mate Section with enhanced cards */
+        .why-care-mate {
+            position: relative;
+        }
+
+        .features {
+            display: flex;
+            gap: 2rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .feature-card {
+            flex: 1;
+            background: linear-gradient(145deg, var(--card-bg), #1a1a24);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all var(--transition-medium) var(--cubic-bezier);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(78, 255, 145, 0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-color);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            transition: transform var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: translateY(-5px) scale(1.1);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            color: var(--text-color-muted);
+            font-size: 1rem;
+        }
+
+        /* Feature scenario - new addition */
+        .feature-scenario {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-style: italic;
+            color: var(--text-color-muted);
+            font-size: 0.9rem;
+        }
+
+        /* What Care Mate Does Section */
+        .what-care-mate-does {
+            background-color: var(--secondary-bg);
+        }
+
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .service-card {
+            background: linear-gradient(145deg, var(--card-bg), #1a1a24);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all var(--transition-medium) var(--cubic-bezier);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(78, 255, 145, 0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-color);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            transition: transform var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .service-card:hover .service-icon {
+            transform: translateY(-5px) scale(1.1);
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-description {
+            color: var(--text-color-muted);
+            font-size: 1rem;
+        }
+
+        /* Service scenario - new addition */
+        .service-scenario {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-style: italic;
+            color: var(--text-color-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Who We Help Section */
+        .who-we-help {
+            position: relative;
+        }
+
+        .role-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .role-card {
+            background: linear-gradient(145deg, var(--card-bg), #1a1a24);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all var(--transition-medium) var(--cubic-bezier);
+            border: 1px solid var(--border-color);
+            text-align: center;
             cursor: pointer;
-            font-size: 20px;
-            padding: 5px;
-            border-radius: 5px;
-            transition: all 0.2s;
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
         }
 
-        .chat-input-btn:hover {
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(78, 255, 145, 0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .role-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-color);
+        }
+
+        .role-card:hover::before {
+            opacity: 1;
+        }
+
+        .role-card.selected {
+            border-color: var(--accent-color);
+            background: linear-gradient(145deg, rgba(78, 255, 145, 0.05), rgba(78, 255, 145, 0.02));
+        }
+
+        .role-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            transition: transform var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .role-card:hover .role-icon {
+            transform: translateY(-5px) scale(1.1);
+        }
+
+        .role-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-description {
+            color: var(--text-color-muted);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Role benefit - new addition */
+        .role-benefit {
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--secondary-bg);
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
             color: var(--text-color);
-            background-color: var(--hover-color);
+            margin-bottom: 1rem;
         }
 
-        .send-btn {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
+        .footer-description {
+            color: var(--text-color-muted);
+            margin-bottom: 1.5rem;
+            max-width: 300px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-icon {
             width: 40px;
             height: 40px;
             border-radius: 50%;
+            background-color: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            transition: all var(--transition-fast) ease;
+        }
+
+        .social-icon:hover {
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+            transform: translateY(-5px);
+        }
+
+        .footer-links-title {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-link {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-link a {
+            color: var(--text-color-muted);
+            text-decoration: none;
+            transition: color var(--transition-fast) ease;
+            position: relative;
+            padding-left: 0;
+        }
+
+        .footer-link a::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--accent-color);
+            transition: width var(--transition-fast) var(--cubic-bezier);
+        }
+
+        .footer-link a:hover {
+            color: var(--accent-color);
+            padding-left: 5px;
+        }
+
+        .footer-link a:hover::before {
+            width: 100%;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-color-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-bottom-link {
+            color: var(--text-color-muted);
+            text-decoration: none;
+            transition: color var(--transition-fast) ease;
+        }
+
+        .footer-bottom-link:hover {
+            color: var(--accent-color);
+        }
+
+        /* Chat Input Preview (New) */
+        .chat-preview-container {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            z-index: 1000;
+            animation: fadeInUp 1s var(--cubic-bezier) forwards;
+            animation-delay: 0.6s;
+            opacity: 0;
+        }
+
+        .chat-preview {
+            background: linear-gradient(145deg, var(--card-bg), #1a1a24);
+            border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all var(--transition-medium) var(--cubic-bezier);
+            cursor: text;
+        }
+
+        .chat-preview:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-color);
+        }
+
+        .chat-preview-icon {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .chat-preview-text {
+            color: var(--text-color-muted);
+            font-size: 1rem;
+            flex: 1;
+        }
+
+        .chat-preview-send {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #2de370 100%);
+            color: var(--primary-bg);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all var(--transition-fast) ease;
+            flex-shrink: 0;
         }
 
-        .send-btn:hover {
-            background-color: #3d8b40;
+        .chat-preview-send:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px var(--accent-glow);
         }
 
-        .send-btn:disabled {
-            background-color: #aaa;
-            cursor: not-allowed;
-        }
-
-        /* File Upload */
-        .file-upload-container {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: var(--hover-color);
-            border-radius: 5px;
-            display: none;
-        }
-
-        .file-upload-container.active {
-            display: block;
-        }
-
-        .file-upload-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .file-upload-title {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .file-upload-close {
-            background: none;
-            border: none;
-            color: #aaa;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .file-upload-area {
-            border: 2px dashed var(--border-color);
-            border-radius: 5px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .file-upload-area:hover {
-            border-color: var(--accent-color);
-            background-color: rgba(76, 175, 80, 0.05);
-        }
-
-        .file-upload-icon {
-            font-size: 30px;
-            color: #aaa;
-            margin-bottom: 10px;
-        }
-
-        .file-upload-text {
-            font-size: 14px;
-            color: #aaa;
-        }
-
-        .file-upload-input {
-            display: none;
-        }
-
-        .uploaded-files {
-            margin-top: 15px;
-        }
-
-        .uploaded-file {
-            display: flex;
-            align-items: center;
-            background-color: var(--input-bg);
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        .file-icon {
-            margin-right: 10px;
-            font-size: 20px;
-            color: #aaa;
-        }
-
-        .file-info {
-            flex: 1;
-        }
-
-        .file-name {
-            font-size: 14px;
-            margin-bottom: 3px;
-        }
-
-        .file-size {
-            font-size: 12px;
-            color: #aaa;
-        }
-
-        .file-remove {
-            background: none;
-            border: none;
-            color: var(--error-color);
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        /* Modal */
-        .modal-overlay {
+        /* Chat Input Modal (New) */
+        .chat-input-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
             display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            z-index: 2000;
             opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
+            pointer-events: none;
+            transition: opacity var(--transition-medium) var(--cubic-bezier);
         }
 
-        .modal-overlay.active {
+        .chat-input-modal.active {
             opacity: 1;
-            visibility: visible;
+            pointer-events: all;
         }
 
-        .modal {
-            background-color: var(--secondary-bg);
-            border-radius: 10px;
-            padding: 25px;
+        .chat-input-content {
+            background: linear-gradient(145deg, var(--card-bg), #1a1a24);
+            border-radius: 16px;
+            padding: 2rem;
             width: 90%;
-            max-width: 500px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            transform: translateY(-20px);
-            transition: all 0.3s;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px) scale(0.95);
+            transition: all var(--transition-medium) var(--cubic-bezier);
+            border: 1px solid var(--border-color);
         }
 
-        .modal-overlay.active .modal {
-            transform: translateY(0);
+        .chat-input-modal.active .chat-input-content {
+            transform: translateY(0) scale(1);
         }
 
-        .modal-header {
+        .chat-input-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .chat-input-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-input-subtitle {
+            color: var(--text-color-muted);
+            font-size: 1rem;
+        }
+
+        .chat-input-field {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            resize: none;
+            min-height: 100px;
+            margin-bottom: 1.5rem;
+            transition: all var(--transition-fast) ease;
+        }
+
+        .chat-input-field:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+
+        .chat-input-actions {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            justify-content: flex-end;
+            gap: 1rem;
         }
 
-        .modal-title {
-            font-size: 20px;
+        /* Role Selection Modal with Pricing (New) */
+        .role-pricing-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .role-pricing-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .role-pricing-content {
+            background: linear-gradient(145deg, var(--card-bg), #1a1a24);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 900px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px) scale(0.95);
+            transition: all var(--transition-medium) var(--cubic-bezier);
+            border: 1px solid var(--border-color);
+        }
+
+        .role-pricing-modal.active .role-pricing-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .role-pricing-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .role-pricing-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-pricing-subtitle {
+            color: var(--text-color-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pricing-packages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-package {
+            background: linear-gradient(145deg, rgba(21, 21, 31, 0.5), rgba(26, 26, 38, 0.5));
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-medium) var(--cubic-bezier);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-package::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(78, 255, 145, 0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .pricing-package:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-color);
+        }
+
+        .pricing-package:hover::before {
+            opacity: 1;
+        }
+
+        .pricing-package.popular {
+            border-color: var(--accent-color);
+            background: linear-gradient(145deg, rgba(78, 255, 145, 0.05), rgba(78, 255, 145, 0.02));
+        }
+
+        .popular-tag {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #2de370 100%);
+            color: var(--primary-bg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: 600;
         }
 
-        .modal-close {
-            background: none;
-            border: none;
-            color: #aaa;
-            cursor: pointer;
-            font-size: 24px;
+        .package-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        .modal-body {
-            margin-bottom: 20px;
+        .package-price {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
         }
 
-        .modal-footer {
+        .package-price span {
+            font-size: 1rem;
+            color: var(--text-color-muted);
+        }
+
+        .package-description {
+            color: var(--text-color-muted);
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .package-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .package-feature {
             display: flex;
-            justify-content: flex-end;
-            gap: 10px;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-color-muted);
+            font-size: 0.9rem;
         }
 
-        /* Debug Panel */
-        .debug-panel {
+        .package-feature i {
+            color: var(--accent-color);
+        }
+
+        .role-pricing-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
             position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
             width: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            color: #eee;
-            font-family: monospace;
-            font-size: 12px;
-            padding: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
+            height: 100%;
+            background-color: var(--primary-bg);
+            z-index: 1500;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            transform: translateX(-100%);
+            transition: transform var(--transition-medium) var(--cubic-bezier);
         }
 
-        .debug-panel.active {
-            display: block;
+        .mobile-menu.active {
+            transform: translateX(0);
         }
 
-        .debug-entry {
-            margin-bottom: 5px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 5px;
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
         }
 
-        .debug-toggle {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
+        .mobile-menu-close {
+            background: none;
             border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
+            color: var(--text-color);
+            font-size: 1.5rem;
             cursor: pointer;
-            z-index: 1001;
+            transition: transform var(--transition-fast) var(--cubic-bezier);
+        }
+
+        .mobile-menu-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-nav-link {
+            margin-bottom: 1.5rem;
+        }
+
+        .mobile-nav-link a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 500;
+            transition: all var(--transition-fast) ease;
+            display: block;
+            padding: 0.5rem 0;
+        }
+
+        .mobile-nav-link a:hover {
+            color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        .mobile-nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Authentication Modal */
+        .auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .auth-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .auth-content {
+            background: linear-gradient(145deg, var(--card-bg), #1a1a24);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px) scale(0.95);
+            transition: all var(--transition-medium) var(--cubic-bezier);
+            border: 1px solid var(--border-color);
+        }
+
+        .auth-modal.active .auth-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: var(--text-color-muted);
+            font-size: 1.1rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            cursor: pointer;
+            color: var(--text-color-muted);
+            transition: all var(--transition-fast) ease;
+            position: relative;
+        }
+
+        .auth-tab.active {
+            color: var(--accent-color);
+        }
+
+        .auth-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width var(--transition-fast) var(--cubic-bezier);
+        }
+
+        .auth-tab.active::after {
+            width: 100%;
+        }
+
+        .auth-form {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all var(--transition-fast) ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color-muted);
+            font-size: 0.9rem;
+        }
+
+        .forgot-password {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all var(--transition-fast) ease;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .auth-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--text-color-muted);
+            font-size: 0.9rem;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+
+        .auth-divider::before {
+            margin-right: 1rem;
+        }
+
+        .auth-divider::after {
+            margin-left: 1rem;
+        }
+
+        .social-auth {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-auth-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast) ease;
+        }
+
+        .social-auth-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-color-muted);
+            font-size: 0.9rem;
+        }
+
+        .auth-footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: all var(--transition-fast) ease;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Checkout Modal */
+        .checkout-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .checkout-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .checkout-content {
+            background: linear-gradient(145deg, var(--card-bg), #1a1a24);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px) scale(0.95);
+            transition: all var(--transition-medium) var(--cubic-bezier);
+            border: 1px solid var(--border-color);
+        }
+
+        .checkout-modal.active .checkout-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .checkout-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkout-subtitle {
+            color: var(--text-color-muted);
+            font-size: 1.1rem;
+        }
+
+        .checkout-summary {
+            background-color: rgba(21, 21, 31, 0.5);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .checkout-plan {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .checkout-plan-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .checkout-plan-price {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .checkout-details {
+            margin-bottom: 1rem;
+        }
+
+        .checkout-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: var(--text-color-muted);
+            font-size: 0.9rem;
+        }
+
+        .checkout-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .checkout-form {
+            margin-bottom: 2rem;
+        }
+
+        .card-element {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            transition: all var(--transition-fast) ease;
+        }
+
+        .card-element:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+
+        .checkout-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        /* Free Plan Modal */
+        .free-plan-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-medium) var(--cubic-bezier);
+        }
+
+        .free-plan-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .free-plan-content {
+            background: linear-gradient(145deg, var(--card-bg), #1a1a24);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px) scale(0.95);
+            transition: all var(--transition-medium) var(--cubic-bezier);
+            border: 1px solid var(--border-color);
+        }
+
+        .free-plan-modal.active .free-plan-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .free-plan-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .free-plan-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .free-plan-subtitle {
+            color: var(--text-color-muted);
+            font-size: 1.1rem;
+        }
+
+        .free-plan-features {
+            background-color: rgba(21, 21, 31, 0.5);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .free-plan-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-color-muted);
+            font-size: 0.95rem;
+        }
+
+        .free-plan-feature i {
+            color: var(--accent-color);
+        }
+
+        .credit-counter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .credit-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .credit-label {
+            color: var(--text-color-muted);
+            font-size: 1rem;
+        }
+
+        .free-plan-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         /* Responsive Design */
-        @media (max-width: 768px) {
-            .app-container {
+        @media (max-width: 1200px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-title {
+                font-size: 3.5rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .features {
                 flex-direction: column;
             }
 
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100%;
-                transform: translateX(-100%);
+            .section {
+                padding: 6rem 1.5rem;
             }
 
-            .sidebar.active {
-                transform: translateX(0);
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links, 
+            .nav-buttons {
+                display: none;
             }
 
-            .sidebar-toggle {
+            .mobile-menu-btn {
                 display: block;
             }
 
-            .main-content {
-                margin-left: 0;
+            .hero-title {
+                font-size: 2.5rem;
             }
 
-            .role-cards {
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .chat-preview-container {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .hero {
+                padding: 1rem;
+            }
+
+            .section {
+                padding: 4rem 1rem;
+            }
+
+            .footer {
+                padding: 3rem 1rem 1.5rem;
+            }
+
+            .footer-content {
+                gap: 2rem;
+            }
+
+            .footer-bottom {
                 flex-direction: column;
+                gap: 1rem;
+                text-align: center;
             }
 
-            .form-row {
+            .footer-bottom-links {
                 flex-direction: column;
-                gap: 0;
+                gap: 0.5rem;
             }
 
-            .message {
-                max-width: 90%;
+            .chat-preview {
+                padding: 1rem;
+            }
+
+            .chat-preview-icon {
+                font-size: 1.2rem;
+            }
+
+            .chat-preview-text {
+                font-size: 0.9rem;
+            }
+
+            .chat-preview-send {
+                width: 35px;
+                height: 35px;
             }
         }
     </style>
@@ -990,1216 +1828,978 @@
         <div class="shape"></div>
         <div class="shape"></div>
         <div class="shape"></div>
+        <div class="shape"></div>
     </div>
 
-    <!-- App Container -->
-    <div class="app-container">
-        <!-- Sidebar Toggle (Mobile) -->
-        <button class="sidebar-toggle" id="sidebarToggle">
-            ☰
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="logo">
+            <i class="fas fa-robot logo-icon"></i>
+            Care Mate
+        </a>
+        <ul class="nav-links">
+            <li><a href="#why-care-mate" class="nav-link">Why Care Mate</a></li>
+            <li><a href="#what-care-mate-does" class="nav-link">What We Do</a></li>
+            <li><a href="#who-we-help" class="nav-link">Who We Help</a></li>
+            <li><a href="#resources" class="nav-link">Resources</a></li>
+        </ul>
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" id="sign-in-btn">Sign In</button>
+            <button class="btn btn-primary start-chat-btn" id="start-chat-btn">
+                <i class="fas fa-comment-dots btn-icon"></i>
+                Start Conversation
+            </button>
+        </div>
+        <button class="mobile-menu-btn" id="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
         </button>
+    </nav>
 
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <button class="new-chat-btn" id="newChatBtn">
-                    <span>+</span> New Chat
-                </button>
-            </div>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-header">
+            <a href="#" class="logo">
+                <i class="fas fa-robot logo-icon"></i>
+                Care Mate
+            </a>
+            <button class="mobile-menu-close" id="mobile-menu-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li class="mobile-nav-link"><a href="#why-care-mate">Why Care Mate</a></li>
+            <li class="mobile-nav-link"><a href="#what-care-mate-does">What We Do</a></li>
+            <li class="mobile-nav-link"><a href="#who-we-help">Who We Help</a></li>
+            <li class="mobile-nav-link"><a href="#resources">Resources</a></li>
+        </ul>
+        <div class="mobile-nav-buttons">
+            <button class="btn btn-secondary" id="mobile-sign-in-btn">Sign In</button>
+            <button class="btn btn-primary start-chat-btn" id="mobile-start-chat-btn">
+                <i class="fas fa-comment-dots btn-icon"></i>
+                Start Conversation
+            </button>
+        </div>
+    </div>
 
-            <div class="folder-section">
-                <div class="folder-header">
-                    <div class="folder-title">FOLDERS</div>
-                    <button class="add-folder-btn" id="addFolderBtn">+</button>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Navigate <span>NDIS</span> with Confidence, Care, and Clarity</h1>
+                <p class="hero-subtitle">Care Mate helps you understand your plan, connect with the right providers, and achieve your goals - all with personalized AI guidance available 24/7.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary start-journey-btn" id="start-journey-btn">
+                        <i class="fas fa-rocket btn-icon"></i>
+                        Start Your Journey
+                    </button>
+                    <button class="btn btn-secondary" id="learn-more-btn">
+                        <i class="fas fa-info-circle btn-icon"></i>
+                        Learn More
+                    </button>
                 </div>
-                <ul class="folder-list" id="folderList">
-                    <li class="folder-item active">
-                        <span class="folder-icon">📁</span> All Chats
-                    </li>
-                    <li class="folder-item">
-                        <span class="folder-icon">📁</span> NDIS Plans
-                    </li>
-                    <li class="folder-item">
-                        <span class="folder-icon">📁</span> Service Providers
-                    </li>
+            </div>
+            <div class="hero-image">
+                <img src="https://placehold.co/600x400/15151f/4eff91?text=Care+Mate+App" alt="Care Mate App Interface">
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse"></div>
+            <span>Scroll to learn more</span>
+        </div>
+    </section>
+
+    <!-- Chat Preview (New) -->
+    <div class="chat-preview-container">
+        <div class="chat-preview" id="chat-preview">
+            <i class="fas fa-comment-dots chat-preview-icon"></i>
+            <div class="chat-preview-text">Help me manage my fundings...</div>
+            <button class="chat-preview-send" id="chat-preview-send">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Why Care Mate Section -->
+    <section class="section why-care-mate" id="why-care-mate">
+        <h2 class="section-title">Why Care Mate</h2>
+        <p class="section-subtitle">We're redefining what support can look like in the digital age — with humanity, empathy, and real power in the participant's hands.</p>
+        <div class="features">
+            <div class="feature-card">
+                <i class="fas fa-bolt feature-icon"></i>
+                <h3 class="feature-title">Instant Answers</h3>
+                <p class="feature-description">Get immediate responses to your NDIS questions, without waiting for appointments or callbacks.</p>
+                <p class="feature-scenario">Imagine having a question about your funding at 2AM — and getting clear, accurate answers instantly, right when you need them.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-user-shield feature-icon"></i>
+                <h3 class="feature-title">Personalized Support</h3>
+                <p class="feature-description">Receive guidance tailored to your specific needs, goals, and NDIS plan details.</p>
+                <p class="feature-scenario">Like having a support coordinator who remembers every detail of your situation and is always focused on your unique journey.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-clock feature-icon"></i>
+                <h3 class="feature-title">Available 24/7</h3>
+                <p class="feature-description">Access support whenever you need it, day or night, weekends and holidays included.</p>
+                <p class="feature-scenario">No more waiting for business hours or feeling stuck on weekends — get the support you deserve, exactly when you need it.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- What Care Mate Does Section -->
+    <section class="section what-care-mate-does" id="what-care-mate-does">
+        <h2 class="section-title">What Care Mate Does</h2>
+        <p class="section-subtitle">Our AI assistant helps you understand your plan, track your goals, and get the support you deserve.</p>
+        <div class="services">
+            <div class="service-card">
+                <i class="fas fa-file-alt service-icon"></i>
+                <h3 class="service-title">Plan Explanation</h3>
+                <p class="service-description">Understand your NDIS plan in plain language, know what's possible, and make informed decisions.</p>
+                <p class="service-scenario">Transform complex NDIS jargon into clear, actionable information that empowers you to use every dollar effectively.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-handshake service-icon"></i>
+                <h3 class="service-title">Provider Matching</h3>
+                <p class="service-description">Get recommendations for providers that match your needs, goals, and preferences.</p>
+                <p class="service-scenario">Find providers who truly understand your unique situation and can deliver the specific support you're looking for.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-chart-line service-icon"></i>
+                <h3 class="service-title">Budget Tracking</h3>
+                <p class="service-description">Keep track of your NDIS budget, monitor spending, and avoid unexpected shortfalls.</p>
+                <p class="service-scenario">Never be surprised by funding issues again — stay in control of your budget with real-time tracking and forecasting.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-robot service-icon"></i>
+                <h3 class="service-title">AI Assistant 24/7</h3>
+                <p class="service-description">Get support documents, provider checklists, letters, and advice whenever you need them.</p>
+                <p class="service-scenario">From drafting emails to providers to creating support letters — get help with paperwork and communication in minutes, not days.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who We Help Section -->
+    <section class="section who-we-help" id="who-we-help">
+        <h2 class="section-title">Who We Help</h2>
+        <p class="section-subtitle">Care Mate is designed to support everyone involved in the NDIS journey.</p>
+        <div class="role-cards">
+            <div class="role-card" data-role="participant">
+                <i class="fas fa-user role-icon"></i>
+                <h3 class="role-title">NDIS Participants</h3>
+                <p class="role-description">Take control of your NDIS plan with personalized guidance and support.</p>
+                <p class="role-benefit">Gain independence and confidence in managing your own support journey.</p>
+                <button class="btn btn-primary select-role-btn" data-role="participant">Select Role</button>
+            </div>
+            <div class="role-card" data-role="coordinator">
+                <i class="fas fa-users role-icon"></i>
+                <h3 class="role-title">Support Coordinators</h3>
+                <p class="role-description">Enhance your service with AI-powered tools and resources.</p>
+                <p class="role-benefit">Support more participants effectively while reducing administrative burden.</p>
+                <button class="btn btn-primary select-role-btn" data-role="coordinator">Select Role</button>
+            </div>
+            <div class="role-card" data-role="manager">
+                <i class="fas fa-calculator role-icon"></i>
+                <h3 class="role-title">Plan Managers</h3>
+                <p class="role-description">Streamline your processes and provide better support to participants.</p>
+                <p class="role-benefit">Increase efficiency while offering more personalized financial guidance.</p>
+                <button class="btn btn-primary select-role-btn" data-role="manager">Select Role</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section class="section" id="resources">
+        <h2 class="section-title">Resources</h2>
+        <p class="section-subtitle">Access helpful guides, articles, and tools to navigate your NDIS journey with confidence.</p>
+        <div class="services">
+            <div class="service-card">
+                <i class="fas fa-book service-icon"></i>
+                <h3 class="service-title">NDIS Guides</h3>
+                <p class="service-description">Comprehensive guides to help you understand every aspect of the NDIS.</p>
+                <button class="btn btn-secondary">View Guides</button>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-newspaper service-icon"></i>
+                <h3 class="service-title">Latest Updates</h3>
+                <p class="service-description">Stay informed about the latest changes and news related to the NDIS.</p>
+                <button class="btn btn-secondary">Read Updates</button>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-calculator service-icon"></i>
+                <h3 class="service-title">Budget Tools</h3>
+                <p class="service-description">Tools to help you plan and track your NDIS budget effectively.</p>
+                <button class="btn btn-secondary">Use Tools</button>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-question-circle service-icon"></i>
+                <h3 class="service-title">FAQs</h3>
+                <p class="service-description">Answers to commonly asked questions about the NDIS and Care Mate.</p>
+                <button class="btn btn-secondary">View FAQs</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <div class="footer-logo">
+                    <i class="fas fa-robot logo-icon"></i>
+                    Care Mate
+                </div>
+                <p class="footer-description">Empowering NDIS participants with AI-powered guidance and support.</p>
+                <div class="footer-social">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-links-title">Quick Links</h4>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="#why-care-mate">Why Care Mate</a></li>
+                    <li class="footer-link"><a href="#what-care-mate-does">What We Do</a></li>
+                    <li class="footer-link"><a href="#who-we-help">Who We Help</a></li>
+                    <li class="footer-link"><a href="#resources">Resources</a></li>
                 </ul>
             </div>
-
-            <div class="chat-list">
-                <div class="chat-list-header">RECENT CHATS</div>
-                <div id="chatList">
-                    <!-- Chat items will be added here dynamically -->
-                </div>
+            <div>
+                <h4 class="footer-links-title">Resources</h4>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="#">Guides</a></li>
+                    <li class="footer-link"><a href="#">FAQs</a></li>
+                    <li class="footer-link"><a href="#">Blog</a></li>
+                    <li class="footer-link"><a href="#">About Us</a></li>
+                </ul>
             </div>
+            <div>
+                <h4 class="footer-links-title">Legal</h4>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="#">Privacy Policy</a></li>
+                    <li class="footer-link"><a href="#">Terms of Service</a></li>
+                    <li class="footer-link"><a href="#">Cookie Policy</a></li>
+                    <li class="footer-link"><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Care Mate. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#" class="footer-bottom-link">Privacy Policy</a>
+                <a href="#" class="footer-bottom-link">Terms of Service</a>
+                <a href="#" class="footer-bottom-link">Cookie Policy</a>
+            </div>
+        </div>
+    </footer>
 
-            <div class="sidebar-footer">
-                <button class="theme-toggle" id="themeToggle">
-                    <span>🌙</span> Dark Mode
+    <!-- Chat Input Modal -->
+    <div class="chat-input-modal" id="chat-input-modal">
+        <div class="chat-input-content">
+            <div class="chat-input-header">
+                <h3 class="chat-input-title">Ask Care Mate</h3>
+                <p class="chat-input-subtitle">What would you like help with today?</p>
+            </div>
+            <textarea class="chat-input-field" id="chat-input-field" placeholder="Type your message here..."></textarea>
+            <div class="chat-input-actions">
+                <button class="btn btn-secondary" id="chat-input-cancel">Cancel</button>
+                <button class="btn btn-primary" id="chat-input-submit">
+                    <i class="fas fa-paper-plane btn-icon"></i>
+                    Send
                 </button>
-                <div class="user-profile" id="userProfile">
-                    <div class="user-avatar">J</div>
-                    <div class="user-name">John</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="header">
-                <div class="logo">Care Mate</div>
-                <div class="tagline">Your NDIS Assistant</div>
-            </div>
-
-            <!-- Onboarding Container (initially visible) -->
-            <div class="onboarding-container" id="onboardingContainer">
-                <div class="onboarding-card">
-                    <div class="steps-indicator">
-                        <div class="step-dot active" data-step="1"></div>
-                        <div class="step-dot" data-step="2"></div>
-                        <div class="step-dot" data-step="3"></div>
-                    </div>
-
-                    <!-- Step 1: Role Selection -->
-                    <div class="onboarding-step" id="step1">
-                        <h2 class="onboarding-title">Tell us about yourself</h2>
-                        <p class="onboarding-subtitle">Select your role to help us personalize your experience</p>
-
-                        <div class="role-cards">
-                            <div class="role-card" data-role="participant">
-                                <div class="role-icon">👤</div>
-                                <div class="role-name">NDIS Participant</div>
-                                <div class="role-price">$50/month</div>
-                                <div>Access personalized NDIS guidance and support</div>
-                            </div>
-                            <div class="role-card" data-role="coordinator">
-                                <div class="role-icon">👥</div>
-                                <div class="role-name">Support Coordinator</div>
-                                <div class="role-price">$100/month</div>
-                                <div>Tools to manage multiple participants efficiently</div>
-                            </div>
-                            <div class="role-card" data-role="planmanager">
-                                <div class="role-icon">💼</div>
-                                <div class="role-name">Plan Manager</div>
-                                <div class="role-price">$80/month</div>
-                                <div>Financial management and reporting tools</div>
-                            </div>
-                        </div>
-
-                        <div class="button-group">
-                            <button class="btn btn-secondary" id="skipBtn">Skip</button>
-                            <button class="btn btn-primary" id="nextBtn1">Continue</button>
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Personal Information -->
-                    <div class="onboarding-step" id="step2" style="display: none;">
-                        <h2 class="onboarding-title">Personal Information</h2>
-                        <p class="onboarding-subtitle">This helps us provide personalized assistance</p>
-
-                        <!-- Participant Form Fields -->
-                        <div id="participantFields">
-                            <div class="form-group">
-                                <label class="form-label">Your Name</label>
-                                <input type="text" class="form-input" id="participantName" placeholder="Enter your name">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">NDIS Number</label>
-                                <input type="text" class="form-input" id="ndisNumber" placeholder="Enter your NDIS number">
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Plan Start Date</label>
-                                    <input type="date" class="form-input" id="planStartDate">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Plan End Date</label>
-                                    <input type="date" class="form-input" id="planEndDate">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Diagnosis (if known)</label>
-                                <input type="text" class="form-input" id="diagnosis" placeholder="Optional">
-                            </div>
-                        </div>
-
-                        <!-- Coordinator Form Fields -->
-                        <div id="coordinatorFields" style="display: none;">
-                            <div class="form-group">
-                                <label class="form-label">Your Name</label>
-                                <input type="text" class="form-input" id="coordinatorName" placeholder="Enter your name">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Company Name</label>
-                                <input type="text" class="form-input" id="coordinatorCompany" placeholder="Enter your company name">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Registration Number</label>
-                                <input type="text" class="form-input" id="coordinatorRegistration" placeholder="Enter your registration number">
-                            </div>
-                        </div>
-
-                        <!-- Plan Manager Form Fields -->
-                        <div id="planManagerFields" style="display: none;">
-                            <div class="form-group">
-                                <label class="form-label">Your Name</label>
-                                <input type="text" class="form-input" id="managerName" placeholder="Enter your name">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Company Name</label>
-                                <input type="text" class="form-input" id="managerCompany" placeholder="Enter your company name">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Registration Number</label>
-                                <input type="text" class="form-input" id="managerRegistration" placeholder="Enter your registration number">
-                            </div>
-                        </div>
-
-                        <div class="button-group">
-                            <button class="btn btn-secondary" id="backBtn2">Back</button>
-                            <button class="btn btn-primary" id="nextBtn2">Continue</button>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Preferences -->
-                    <div class="onboarding-step" id="step3" style="display: none;">
-                        <h2 class="onboarding-title">Your Preferences</h2>
-                        <p class="onboarding-subtitle">Help us understand your needs better</p>
-
-                        <div class="form-group">
-                            <label class="form-label">Current Level of Support</label>
-                            <select class="form-input" id="supportLevel">
-                                <option value="">Select your level of support</option>
-                                <option value="low">Low - Minimal assistance needed</option>
-                                <option value="medium">Medium - Regular assistance needed</option>
-                                <option value="high">High - Significant assistance needed</option>
-                                <option value="very-high">Very High - Constant assistance needed</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Primary Purpose</label>
-                            <select class="form-input" id="primaryPurpose">
-                                <option value="">What brings you to Care Mate?</option>
-                                <option value="plan-management">Help with plan management</option>
-                                <option value="find-providers">Finding service providers</option>
-                                <option value="understand-ndis">Understanding NDIS better</option>
-                                <option value="document-creation">Creating NDIS documents</option>
-                                <option value="funding-advice">Advice on using funding</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-
-                        <div class="checkbox-group">
-                            <label class="form-label">Areas you need assistance with:</label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" class="checkbox-input" value="funding"> Understanding funding categories
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" class="checkbox-input" value="providers"> Finding and managing service providers
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" class="checkbox-input" value="documents"> Creating and managing documents
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" class="checkbox-input" value="goals"> Setting and tracking goals
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" class="checkbox-input" value="reviews"> Preparing for plan reviews
-                            </label>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Additional Information</label>
-                            <textarea class="form-input" id="additionalInfo" rows="3" placeholder="Anything else you'd like us to know?"></textarea>
-                        </div>
-
-                        <div class="button-group">
-                            <button class="btn btn-secondary" id="backBtn3">Back</button>
-                            <button class="btn btn-primary" id="finishBtn">Get Started</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chat Container (initially hidden) -->
-            <div class="chat-container" id="chatContainer" style="display: none;">
-                <div class="chat-messages" id="chatMessages">
-                    <!-- Messages will be added here dynamically -->
-                </div>
-
-                <div class="chat-input-container">
-                    <div class="suggestions" id="suggestions">
-                        <button class="suggestion-btn">Help me manage my NDIS plan</button>
-                        <button class="suggestion-btn">Explain my funding categories</button>
-                        <button class="suggestion-btn">Find service providers near me</button>
-                        <button class="suggestion-btn">Create an NDIS-compliant document</button>
-                    </div>
-
-                    <div class="chat-input-wrapper">
-                        <textarea class="chat-input" id="messageInput" placeholder="Type your message here..." rows="1"></textarea>
-                        <div class="chat-input-actions">
-                            <button class="chat-input-btn" id="uploadBtn" title="Upload File">
-                                📎
-                            </button>
-                            <button class="send-btn" id="sendBtn" disabled>
-                                ➤
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="file-upload-container" id="fileUploadContainer">
-                        <div class="file-upload-header">
-                            <div class="file-upload-title">Upload Files</div>
-                            <button class="file-upload-close" id="closeUploadBtn">×</button>
-                        </div>
-                        <div class="file-upload-area" id="fileUploadArea">
-                            <div class="file-upload-icon">📄</div>
-                            <div class="file-upload-text">Drag and drop files here or click to browse</div>
-                            <input type="file" class="file-upload-input" id="fileUploadInput" multiple>
-                        </div>
-                        <div class="uploaded-files" id="uploadedFiles">
-                            <!-- Uploaded files will be added here dynamically -->
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- Rename Chat Modal -->
-    <div class="modal-overlay" id="renameChatModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">Rename Chat</div>
-                <button class="modal-close" id="closeRenameModal">×</button>
+    <!-- Role Selection Modal with Pricing -->
+    <div class="role-pricing-modal" id="role-pricing-modal">
+        <div class="role-pricing-content">
+            <div class="role-pricing-header">
+                <h2 class="role-pricing-title">Choose Your Plan</h2>
+                <p class="role-pricing-subtitle">Select the plan that best fits your needs to continue your conversation with Care Mate.</p>
             </div>
-            <div class="modal-body">
+            <div class="pricing-packages">
+                <div class="pricing-package">
+                    <h3 class="package-name">NDIS Participant / Carer</h3>
+                    <div class="package-price">$50<span>/month</span></div>
+                    <p class="package-description">Perfect for individuals navigating the NDIS system.</p>
+                    <ul class="package-features">
+                        <li class="package-feature"><i class="fas fa-check"></i> Unlimited basic questions</li>
+                        <li class="package-feature"><i class="fas fa-check"></i> Plan explanation</li>
+                        <li class="package-feature"><i class="fas fa-check"></i> Provider recommendations</li>
+                        <li class="package-feature"><i class="fas fa-check"></i> Budget tracking</li>
+                        <li class="package-feature"><i class="fas fa-check"></i> Email support</li>
+                    </ul>
+                    <button class="btn btn-secondary select-package-btn" data-package="participant" data-price="50">Select Plan</button>
+                </div>
+                <div class="pricing-package popular">
+                    <div class="popular-tag">Most Popular</div>
+                    <h3 class="package-name">Support Coordinator</h3>
+                    <div class="package-price">$100<span>/month</span></div>
+                    <p class="package-description">Comprehensive tools for support coordinators.</p>
+                    <ul class="package-features">
+                        <li class="package-feature"><i class="fas fa-check"></i> All Participant features</li>
+                        <li class="package-feature"><i class="fas fa-check"></i> Multi-client management</li>
+                        <li class="package-feature"><i class="fas fa-check"></i> Document generation</li>
+                        <li class="package-feature"><i class="fas fa-check"></i> Priority support</li>
+                        <li class="package-feature"><i class="fas fa-check"></i> Monthly progress reports</li>
+                    </ul>
+                    <button class="btn btn-primary select-package-btn" data-package="coordinator" data-price="100">Select Plan</button>
+                </div>
+                <div class="pricing-package">
+                    <h3 class="package-name">Plan Manager</h3>
+                    <div class="package-price">$80<span>/month</span></div>
+                    <p class="package-description">Specialized tools for plan managers.</p>
+                    <ul class="package-features">
+                        <li class="package-feature"><i class="fas fa-check"></i> All Participant features</li>
+                        <li class="package-feature"><i class="fas fa-check"></i> Financial tracking tools</li>
+                        <li class="package-feature"><i class="fas fa-check"></i> Advanced reporting</li>
+                        <li class="package-feature"><i class="fas fa-check"></i> API integration</li>
+                        <li class="package-feature"><i class="fas fa-check"></i> Dedicated account manager</li>
+                    </ul>
+                    <button class="btn btn-secondary select-package-btn" data-package="manager" data-price="80">Select Plan</button>
+                </div>
+            </div>
+            <div class="role-pricing-actions">
+                <button class="btn btn-secondary" id="role-pricing-cancel">Cancel</button>
+                <button class="btn btn-secondary" id="free-plan-btn">Try Free Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="auth-content">
+            <div class="auth-header">
+                <h2 class="auth-title">Welcome to Care Mate</h2>
+                <p class="auth-subtitle">Sign in to your account or create a new one</p>
+            </div>
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="signin-tab">Sign In</div>
+                <div class="auth-tab" id="signup-tab">Sign Up</div>
+            </div>
+            <div class="auth-form" id="signin-form">
                 <div class="form-group">
-                    <label class="form-label">Chat Name</label>
-                    <input type="text" class="form-input" id="chatNameInput" placeholder="Enter a name for this chat">
+                    <label for="signin-email" class="form-label">Email</label>
+                    <input type="email" id="signin-email" class="form-input" placeholder="Enter your email">
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelRenameBtn">Cancel</button>
-                <button class="btn btn-primary" id="saveRenameBtn">Save</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- New Folder Modal -->
-    <div class="modal-overlay" id="newFolderModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">Create New Folder</div>
-                <button class="modal-close" id="closeNewFolderModal">×</button>
-            </div>
-            <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label">Folder Name</label>
-                    <input type="text" class="form-input" id="folderNameInput" placeholder="Enter a name for this folder">
+                    <label for="signin-password" class="form-label">Password</label>
+                    <input type="password" id="signin-password" class="form-input" placeholder="Enter your password">
+                </div>
+                <div class="form-footer">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember-me">
+                        <label for="remember-me">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+                <div class="auth-actions">
+                    <button class="btn btn-primary" id="signin-btn">Sign In</button>
+                </div>
+                <div class="auth-divider">or continue with</div>
+                <div class="social-auth">
+                    <button class="social-auth-btn"><i class="fab fa-google"></i></button>
+                    <button class="social-auth-btn"><i class="fab fa-facebook-f"></i></button>
+                    <button class="social-auth-btn"><i class="fab fa-apple"></i></button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelNewFolderBtn">Cancel</button>
-                <button class="btn btn-primary" id="saveNewFolderBtn">Create</button>
+            <div class="auth-form" id="signup-form" style="display: none;">
+                <div class="form-group">
+                    <label for="signup-name" class="form-label">Full Name</label>
+                    <input type="text" id="signup-name" class="form-input" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="signup-email" class="form-label">Email</label>
+                    <input type="email" id="signup-email" class="form-input" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="signup-password" class="form-label">Password</label>
+                    <input type="password" id="signup-password" class="form-input" placeholder="Create a password">
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm-password" class="form-label">Confirm Password</label>
+                    <input type="password" id="signup-confirm-password" class="form-input" placeholder="Confirm your password">
+                </div>
+                <div class="auth-actions">
+                    <button class="btn btn-primary" id="signup-btn">Create Account</button>
+                </div>
+                <div class="auth-divider">or continue with</div>
+                <div class="social-auth">
+                    <button class="social-auth-btn"><i class="fab fa-google"></i></button>
+                    <button class="social-auth-btn"><i class="fab fa-facebook-f"></i></button>
+                    <button class="social-auth-btn"><i class="fab fa-apple"></i></button>
+                </div>
+            </div>
+            <div class="auth-footer">
+                <p id="signin-footer">Don't have an account? <a href="#" id="to-signup">Sign up</a></p>
+                <p id="signup-footer" style="display: none;">Already have an account? <a href="#" id="to-signin">Sign in</a></p>
             </div>
         </div>
     </div>
 
-    <!-- Debug Panel -->
-    <div class="debug-panel" id="debugPanel"></div>
-    <button class="debug-toggle" id="debugToggle">Show Debug Info</button>
+    <!-- Free Plan Modal -->
+    <div class="free-plan-modal" id="free-plan-modal">
+        <div class="free-plan-content">
+            <div class="free-plan-header">
+                <h2 class="free-plan-title">Free Plan</h2>
+                <p class="free-plan-subtitle">Get started with Care Mate at no cost</p>
+            </div>
+            <div class="free-plan-features">
+                <div class="free-plan-feature">
+                    <i class="fas fa-check"></i>
+                    <span>Basic NDIS questions and answers</span>
+                </div>
+                <div class="free-plan-feature">
+                    <i class="fas fa-check"></i>
+                    <span>Simple plan explanations</span>
+                </div>
+                <div class="free-plan-feature">
+                    <i class="fas fa-check"></i>
+                    <span>Limited provider recommendations</span>
+                </div>
+                <div class="free-plan-feature">
+                    <i class="fas fa-check"></i>
+                    <span>Email support (response within 48 hours)</span>
+                </div>
+                <div class="credit-counter">
+                    <div class="credit-value">500</div>
+                    <div class="credit-label">Credits available<br>for AI assistance</div>
+                </div>
+            </div>
+            <div class="free-plan-actions">
+                <button class="btn btn-secondary" id="free-plan-cancel">Cancel</button>
+                <button class="btn btn-primary" id="free-plan-signup">Sign Up for Free</button>
+            </div>
+        </div>
+    </div>
 
+    <!-- Checkout Modal -->
+    <div class="checkout-modal" id="checkout-modal">
+        <div class="checkout-content">
+            <div class="checkout-header">
+                <h2 class="checkout-title">Complete Your Purchase</h2>
+                <p class="checkout-subtitle">You're just one step away from accessing Care Mate</p>
+            </div>
+            <div class="checkout-summary">
+                <div class="checkout-plan">
+                    <div class="checkout-plan-name" id="checkout-plan-name">NDIS Participant / Carer</div>
+                    <div class="checkout-plan-price" id="checkout-plan-price">$50.00</div>
+                </div>
+                <div class="checkout-details">
+                    <div class="checkout-detail">
+                        <span>Subscription</span>
+                        <span id="checkout-subscription">Monthly</span>
+                    </div>
+                    <div class="checkout-detail">
+                        <span>Renewal Date</span>
+                        <span id="checkout-renewal">May 28, 2025</span>
+                    </div>
+                </div>
+                <div class="checkout-total">
+                    <span>Total</span>
+                    <span id="checkout-total">$50.00</span>
+                </div>
+            </div>
+            <div class="checkout-form">
+                <div class="form-group">
+                    <label for="card-element" class="form-label">Card Details</label>
+                    <div id="card-element" class="card-element">
+                        <!-- Stripe Card Element will be inserted here -->
+                    </div>
+                    <div id="card-errors" role="alert" style="color: var(--error-color); margin-top: 0.5rem; font-size: 0.9rem;"></div>
+                </div>
+            </div>
+            <div class="checkout-actions">
+                <button class="btn btn-secondary" id="checkout-cancel">Cancel</button>
+                <button class="btn btn-primary" id="checkout-submit">
+                    <i class="fas fa-lock btn-icon"></i>
+                    Pay Now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
     <script>
-        // Global variables
-        let selectedRole = '';
-        let userProfile = {};
-        let currentChatId = null;
-        let chats = {};
-        let folders = [
-            { id: 'all', name: 'All Chats', isDefault: true },
-            { id: 'ndis-plans', name: 'NDIS Plans' },
-            { id: 'service-providers', name: 'Service Providers' }
-        ];
-        let sessionId = generateSessionId();
-        let isTyping = false;
-        let uploadedFiles = [];
-        let isDarkMode = true;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Variables
+            const navbar = document.getElementById('navbar');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuClose = document.getElementById('mobile-menu-close');
+            const startChatBtns = document.querySelectorAll('.start-chat-btn');
+            const startJourneyBtn = document.getElementById('start-journey-btn');
+            const learnMoreBtn = document.getElementById('learn-more-btn');
+            const chatPreview = document.getElementById('chat-preview');
+            const chatPreviewSend = document.getElementById('chat-preview-send');
+            const chatInputModal = document.getElementById('chat-input-modal');
+            const chatInputField = document.getElementById('chat-input-field');
+            const chatInputCancel = document.getElementById('chat-input-cancel');
+            const chatInputSubmit = document.getElementById('chat-input-submit');
+            const rolePricingModal = document.getElementById('role-pricing-modal');
+            const rolePricingCancel = document.getElementById('role-pricing-cancel');
+            const selectPackageBtns = document.querySelectorAll('.select-package-btn');
+            const selectRoleBtns = document.querySelectorAll('.select-role-btn');
+            const sectionTitles = document.querySelectorAll('.section-title');
+            const sectionSubtitles = document.querySelectorAll('.section-subtitle');
+            const featureCards = document.querySelectorAll('.feature-card');
+            const serviceCards = document.querySelectorAll('.service-card');
+            const roleCards = document.querySelectorAll('.role-card');
+            const signInBtn = document.getElementById('sign-in-btn');
+            const mobileSignInBtn = document.getElementById('mobile-sign-in-btn');
+            const freePlanBtn = document.getElementById('free-plan-btn');
+            const freePlanModal = document.getElementById('free-plan-modal');
+            const freePlanCancel = document.getElementById('free-plan-cancel');
+            const freePlanSignup = document.getElementById('free-plan-signup');
+            const authModal = document.getElementById('auth-modal');
+            const signinTab = document.getElementById('signin-tab');
+            const signupTab = document.getElementById('signup-tab');
+            const signinForm = document.getElementById('signin-form');
+            const signupForm = document.getElementById('signup-form');
+            const signinFooter = document.getElementById('signin-footer');
+            const signupFooter = document.getElementById('signup-footer');
+            const toSignup = document.getElementById('to-signup');
+            const toSignin = document.getElementById('to-signin');
+            const signinBtn = document.getElementById('signin-btn');
+            const signupBtn = document.getElementById('signup-btn');
+            const checkoutModal = document.getElementById('checkout-modal');
+            const checkoutPlanName = document.getElementById('checkout-plan-name');
+            const checkoutPlanPrice = document.getElementById('checkout-plan-price');
+            const checkoutTotal = document.getElementById('checkout-total');
+            const checkoutRenewal = document.getElementById('checkout-renewal');
+            const checkoutCancel = document.getElementById('checkout-cancel');
+            const checkoutSubmit = document.getElementById('checkout-submit');
 
-        // API URL - direct connection to Replit backend
-        const API_URL = 'https://caremate-ai-backend-ts67450.replit.app/chat';
-
-        // DOM Elements
-        const onboardingContainer = document.getElementById('onboardingContainer');
-        const chatContainer = document.getElementById('chatContainer');
-        const chatMessages = document.getElementById('chatMessages');
-        const messageInput = document.getElementById('messageInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const suggestions = document.getElementById('suggestions');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const chatList = document.getElementById('chatList');
-        const newChatBtn = document.getElementById('newChatBtn');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const fileUploadContainer = document.getElementById('fileUploadContainer');
-        const closeUploadBtn = document.getElementById('closeUploadBtn');
-        const fileUploadArea = document.getElementById('fileUploadArea');
-        const fileUploadInput = document.getElementById('fileUploadInput');
-        const uploadedFilesContainer = document.getElementById('uploadedFiles');
-        const debugPanel = document.getElementById('debugPanel');
-        const debugToggle = document.getElementById('debugToggle');
-        const themeToggle = document.getElementById('themeToggle');
-        const renameChatModal = document.getElementById('renameChatModal');
-        const chatNameInput = document.getElementById('chatNameInput');
-        const saveRenameBtn = document.getElementById('saveRenameBtn');
-        const cancelRenameBtn = document.getElementById('cancelRenameBtn');
-        const closeRenameModal = document.getElementById('closeRenameModal');
-        const newFolderModal = document.getElementById('newFolderModal');
-        const folderNameInput = document.getElementById('folderNameInput');
-        const saveNewFolderBtn = document.getElementById('saveNewFolderBtn');
-        const cancelNewFolderBtn = document.getElementById('cancelNewFolderBtn');
-        const closeNewFolderModal = document.getElementById('closeNewFolderModal');
-        const addFolderBtn = document.getElementById('addFolderBtn');
-        const folderList = document.getElementById('folderList');
-
-        // Onboarding elements
-        const roleCards = document.querySelectorAll('.role-card');
-        const nextBtn1 = document.getElementById('nextBtn1');
-        const nextBtn2 = document.getElementById('nextBtn2');
-        const backBtn2 = document.getElementById('backBtn2');
-        const backBtn3 = document.getElementById('backBtn3');
-        const finishBtn = document.getElementById('finishBtn');
-        const skipBtn = document.getElementById('skipBtn');
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        const step3 = document.getElementById('step3');
-        const participantFields = document.getElementById('participantFields');
-        const coordinatorFields = document.getElementById('coordinatorFields');
-        const planManagerFields = document.getElementById('planManagerFields');
-
-        // Initialize the application
-        function init() {
-            // Check if user has completed onboarding
-            const savedProfile = localStorage.getItem('userProfile');
-            if (savedProfile) {
-                userProfile = JSON.parse(savedProfile);
-                selectedRole = userProfile.role;
-                completeOnboarding();
-            }
-
-            // Load saved chats
-            loadChats();
-
-            // Event listeners
-            setupEventListeners();
-        }
-
-        // Set up event listeners
-        function setupEventListeners() {
-            // Onboarding event listeners
-            roleCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    roleCards.forEach(c => c.classList.remove('selected'));
-                    card.classList.add('selected');
-                    selectedRole = card.dataset.role;
-                });
-            });
-
-            nextBtn1.addEventListener('click', () => {
-                if (!selectedRole) {
-                    alert('Please select a role to continue');
-                    return;
-                }
-                step1.style.display = 'none';
-                step2.style.display = 'block';
-                document.querySelector('.step-dot[data-step="1"]').classList.remove('active');
-                document.querySelector('.step-dot[data-step="2"]').classList.add('active');
-
-                // Show appropriate fields based on role
-                participantFields.style.display = 'none';
-                coordinatorFields.style.display = 'none';
-                planManagerFields.style.display = 'none';
-
-                if (selectedRole === 'participant') {
-                    participantFields.style.display = 'block';
-                } else if (selectedRole === 'coordinator') {
-                    coordinatorFields.style.display = 'block';
-                } else if (selectedRole === 'planmanager') {
-                    planManagerFields.style.display = 'block';
-                }
-            });
-
-            nextBtn2.addEventListener('click', () => {
-                // Validate fields based on role
-                let isValid = true;
-                if (selectedRole === 'participant') {
-                    if (!document.getElementById('participantName').value) {
-                        alert('Please enter your name');
-                        isValid = false;
-                    }
-                } else if (selectedRole === 'coordinator') {
-                    if (!document.getElementById('coordinatorName').value) {
-                        alert('Please enter your name');
-                        isValid = false;
-                    }
-                } else if (selectedRole === 'planmanager') {
-                    if (!document.getElementById('managerName').value) {
-                        alert('Please enter your name');
-                        isValid = false;
-                    }
-                }
-
-                if (!isValid) return;
-
-                step2.style.display = 'none';
-                step3.style.display = 'block';
-                document.querySelector('.step-dot[data-step="2"]').classList.remove('active');
-                document.querySelector('.step-dot[data-step="3"]').classList.add('active');
-            });
-
-            backBtn2.addEventListener('click', () => {
-                step2.style.display = 'none';
-                step1.style.display = 'block';
-                document.querySelector('.step-dot[data-step="2"]').classList.remove('active');
-                document.querySelector('.step-dot[data-step="1"]').classList.add('active');
-            });
-
-            backBtn3.addEventListener('click', () => {
-                step3.style.display = 'none';
-                step2.style.display = 'block';
-                document.querySelector('.step-dot[data-step="3"]').classList.remove('active');
-                document.querySelector('.step-dot[data-step="2"]').classList.add('active');
-            });
-
-            finishBtn.addEventListener('click', () => {
-                saveUserProfile();
-                completeOnboarding();
-            });
-
-            skipBtn.addEventListener('click', () => {
-                completeOnboarding();
-            });
-
-            // Chat interface event listeners
-            messageInput.addEventListener('input', () => {
-                // Auto-resize textarea
-                messageInput.style.height = 'auto';
-                messageInput.style.height = messageInput.scrollHeight + 'px';
-                
-                // Enable/disable send button
-                sendBtn.disabled = messageInput.value.trim() === '';
-            });
-
-            messageInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    if (!sendBtn.disabled) {
-                        sendMessage();
-                    }
-                }
-            });
-
-            sendBtn.addEventListener('click', sendMessage);
-
-            // Suggestion buttons
-            suggestions.addEventListener('click', (e) => {
-                if (e.target.classList.contains('suggestion-btn')) {
-                    messageInput.value = e.target.textContent;
-                    messageInput.dispatchEvent(new Event('input'));
-                    sendMessage();
-                }
-            });
-
-            // Sidebar toggle (mobile)
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('active');
-            });
-
-            // New chat button
-            newChatBtn.addEventListener('click', () => {
-                startNewChat();
-            });
-
-            // File upload
-            uploadBtn.addEventListener('click', () => {
-                fileUploadContainer.classList.toggle('active');
-            });
-
-            closeUploadBtn.addEventListener('click', () => {
-                fileUploadContainer.classList.remove('active');
-            });
-
-            fileUploadArea.addEventListener('click', () => {
-                fileUploadInput.click();
-            });
-
-            fileUploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                fileUploadArea.style.borderColor = 'var(--accent-color)';
-                fileUploadArea.style.backgroundColor = 'rgba(76, 175, 80, 0.05)';
-            });
-
-            fileUploadArea.addEventListener('dragleave', () => {
-                fileUploadArea.style.borderColor = 'var(--border-color)';
-                fileUploadArea.style.backgroundColor = 'transparent';
-            });
-
-            fileUploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                fileUploadArea.style.borderColor = 'var(--border-color)';
-                fileUploadArea.style.backgroundColor = 'transparent';
-                
-                const files = e.dataTransfer.files;
-                handleFileUpload(files);
-            });
-
-            fileUploadInput.addEventListener('change', () => {
-                handleFileUpload(fileUploadInput.files);
-            });
-
-            // Debug panel
-            debugToggle.addEventListener('click', () => {
-                debugPanel.classList.toggle('active');
-                debugToggle.textContent = debugPanel.classList.contains('active') ? 'Hide Debug Info' : 'Show Debug Info';
-            });
-
-            // Theme toggle
-            themeToggle.addEventListener('click', () => {
-                toggleTheme();
-            });
-
-            // Rename chat modal
-            saveRenameBtn.addEventListener('click', () => {
-                const newName = chatNameInput.value.trim();
-                if (newName && currentChatId) {
-                    renameChat(currentChatId, newName);
-                    renameChatModal.classList.remove('active');
-                }
-            });
-
-            cancelRenameBtn.addEventListener('click', () => {
-                renameChatModal.classList.remove('active');
-            });
-
-            closeRenameModal.addEventListener('click', () => {
-                renameChatModal.classList.remove('active');
-            });
-
-            // New folder modal
-            addFolderBtn.addEventListener('click', () => {
-                newFolderModal.classList.add('active');
-            });
-
-            saveNewFolderBtn.addEventListener('click', () => {
-                const folderName = folderNameInput.value.trim();
-                if (folderName) {
-                    createNewFolder(folderName);
-                    newFolderModal.classList.remove('active');
-                    folderNameInput.value = '';
-                }
-            });
-
-            cancelNewFolderBtn.addEventListener('click', () => {
-                newFolderModal.classList.remove('active');
-            });
-
-            closeNewFolderModal.addEventListener('click', () => {
-                newFolderModal.classList.remove('active');
-            });
-        }
-
-        // Save user profile from onboarding
-        function saveUserProfile() {
-            userProfile = {
-                role: selectedRole
-            };
-
-            if (selectedRole === 'participant') {
-                userProfile.name = document.getElementById('participantName').value;
-                userProfile.ndisNumber = document.getElementById('ndisNumber').value;
-                userProfile.planStartDate = document.getElementById('planStartDate').value;
-                userProfile.planEndDate = document.getElementById('planEndDate').value;
-                userProfile.diagnosis = document.getElementById('diagnosis').value;
-            } else if (selectedRole === 'coordinator') {
-                userProfile.name = document.getElementById('coordinatorName').value;
-                userProfile.company = document.getElementById('coordinatorCompany').value;
-                userProfile.registrationNumber = document.getElementById('coordinatorRegistration').value;
-            } else if (selectedRole === 'planmanager') {
-                userProfile.name = document.getElementById('managerName').value;
-                userProfile.company = document.getElementById('managerCompany').value;
-                userProfile.registrationNumber = document.getElementById('managerRegistration').value;
-            }
-
-            userProfile.supportLevel = document.getElementById('supportLevel').value;
-            userProfile.purpose = document.getElementById('primaryPurpose').value;
-            
-            // Get selected assistance areas
-            const assistanceAreas = [];
-            document.querySelectorAll('.checkbox-input:checked').forEach(checkbox => {
-                assistanceAreas.push(checkbox.value);
-            });
-            userProfile.assistanceAreas = assistanceAreas;
-            
-            userProfile.additionalInfo = document.getElementById('additionalInfo').value;
-
-            // Save to localStorage
-            localStorage.setItem('userProfile', JSON.stringify(userProfile));
-
-            // Update user profile display
-            if (userProfile.name) {
-                document.querySelector('.user-name').textContent = userProfile.name;
-                document.querySelector('.user-avatar').textContent = userProfile.name.charAt(0);
-            }
-        }
-
-        // Complete onboarding and show chat interface
-        function completeOnboarding() {
-            onboardingContainer.style.display = 'none';
-            chatContainer.style.display = 'flex';
-            
-            // Start a new chat if none exists
-            if (Object.keys(chats).length === 0) {
-                startNewChat();
-            } else {
-                // Load the most recent chat
-                const chatIds = Object.keys(chats);
-                if (chatIds.length > 0) {
-                    loadChat(chatIds[chatIds.length - 1]);
-                }
-            }
-        }
-
-        // Start a new chat
-        function startNewChat() {
-            // Generate a new chat ID
-            const chatId = generateChatId();
-            
-            // Create a new chat object
-            chats[chatId] = {
-                id: chatId,
-                title: 'New Chat',
-                messages: [],
-                createdAt: new Date().toISOString(),
-                folderId: 'all'
-            };
-            
-            // Save chats to localStorage
-            saveChats();
-            
-            // Add chat to the list
-            addChatToList(chats[chatId]);
-            
-            // Load the new chat
-            loadChat(chatId);
-            
-            // Add welcome message
-            addAssistantMessage('Hello! I\'m Care Mate, your NDIS assistant. How can I help you today?');
-            
-            // Show suggestions
-            suggestions.style.display = 'flex';
-        }
-
-        // Load a specific chat
-        function loadChat(chatId) {
-            if (!chats[chatId]) return;
-            
-            // Set current chat ID
-            currentChatId = chatId;
-            
-            // Clear chat messages
-            chatMessages.innerHTML = '';
-            
-            // Load messages
-            chats[chatId].messages.forEach(msg => {
-                if (msg.role === 'user') {
-                    addUserMessage(msg.content, msg.timestamp);
-                } else {
-                    addAssistantMessage(msg.content, msg.timestamp);
-                }
-            });
-            
-            // Update active chat in the list
-            document.querySelectorAll('.chat-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            const chatItem = document.querySelector(`.chat-item[data-id="${chatId}"]`);
-            if (chatItem) {
-                chatItem.classList.add('active');
-            }
-            
-            // Hide suggestions if chat has messages
-            if (chats[chatId].messages.length > 0) {
-                suggestions.style.display = 'none';
-            } else {
-                suggestions.style.display = 'flex';
-            }
-            
-            // Scroll to bottom
-            scrollToBottom();
-        }
-
-        // Add a chat to the sidebar list
-        function addChatToList(chat) {
-            // Create chat item element
-            const chatItem = document.createElement('div');
-            chatItem.className = 'chat-item';
-            chatItem.dataset.id = chat.id;
-            
-            // Create chat content
-            chatItem.innerHTML = `
-                <span class="chat-icon">💬</span>
-                <div class="chat-title">${chat.title}</div>
-                <div class="chat-actions">
-                    <button class="chat-action-btn rename-btn" title="Rename">✏️</button>
-                    <button class="chat-action-btn delete-btn" title="Delete">🗑️</button>
-                </div>
-            `;
-            
-            // Add event listeners
-            chatItem.addEventListener('click', () => {
-                loadChat(chat.id);
-            });
-            
-            chatItem.querySelector('.rename-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                openRenameModal(chat.id);
-            });
-            
-            chatItem.querySelector('.delete-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                deleteChat(chat.id);
-            });
-            
-            // Add to chat list
-            chatList.prepend(chatItem);
-        }
-
-        // Send a message
-        function sendMessage() {
-            const message = messageInput.value.trim();
-            if (!message) return;
-            
-            // Add user message to UI
-            addUserMessage(message);
-            
-            // Save message to chat history
-            saveMessage('user', message);
-            
-            // Clear input
-            messageInput.value = '';
-            messageInput.style.height = 'auto';
-            sendBtn.disabled = true;
-            
-            // Hide suggestions
-            suggestions.style.display = 'none';
-            
-            // Show typing indicator
-            showTypingIndicator();
-            
-            // Send to API
-            sendToAPI(message);
-        }
-
-        // Add a user message to the chat
-        function addUserMessage(message, timestamp = new Date().toISOString()) {
-            const messageElement = document.createElement('div');
-            messageElement.className = 'message message-user';
-            
-            const formattedTime = formatTimestamp(timestamp);
-            
-            messageElement.innerHTML = `
-                <div class="message-content">${message}</div>
-                <div class="message-time">${formattedTime}</div>
-            `;
-            
-            chatMessages.appendChild(messageElement);
-            scrollToBottom();
-        }
-
-        // Add an assistant message to the chat
-        function addAssistantMessage(message, timestamp = new Date().toISOString()) {
-            // Remove typing indicator if present
-            removeTypingIndicator();
-            
-            const messageElement = document.createElement('div');
-            messageElement.className = 'message message-assistant';
-            
-            const formattedTime = formatTimestamp(timestamp);
-            
-            // Format warnings in the message
-            let formattedMessage = message;
-            
-            // Check for warning format
-            if (message.includes('⚠️ Warning')) {
-                // Split by warning markers
-                const parts = message.split('⚠️ Warning');
-                
-                formattedMessage = parts[0]; // Text before first warning
-                
-                // Process each warning
-                for (let i = 1; i < parts.length; i++) {
-                    const warningContent = parts[i];
-                    formattedMessage += `
-                        <div class="warning-message">
-                            <div class="warning-title">⚠️ Warning${warningContent.split('\n')[0]}</div>
-                            ${warningContent.split('\n').slice(1).join('\n')}
-                        </div>
-                    `;
-                    
-                    // Add any text after the warning
-                    if (i < parts.length - 1) {
-                        formattedMessage += parts[i].split('\n\n').slice(-1)[0];
-                    }
-                }
-            }
-            
-            messageElement.innerHTML = `
-                <div class="message-content">${formattedMessage}</div>
-                <div class="message-time">${formattedTime}</div>
-            `;
-            
-            chatMessages.appendChild(messageElement);
-            scrollToBottom();
-        }
-
-        // Show typing indicator
-        function showTypingIndicator() {
-            if (isTyping) return;
-            
-            isTyping = true;
-            const typingElement = document.createElement('div');
-            typingElement.className = 'typing-indicator';
-            typingElement.id = 'typingIndicator';
-            
-            typingElement.innerHTML = `
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            `;
-            
-            chatMessages.appendChild(typingElement);
-            scrollToBottom();
-        }
-
-        // Remove typing indicator
-        function removeTypingIndicator() {
-            isTyping = false;
-            const typingElement = document.getElementById('typingIndicator');
-            if (typingElement) {
-                typingElement.remove();
-            }
-        }
-
-        // Send message to API
-        async function sendToAPI(message) {
+            // Initialize Stripe
+            let stripe, elements, card;
             try {
-                addDebugEntry(`Sending message: "${message}"`);
-                addDebugEntry(`Fetching ${API_URL} with message: "${message}"`);
+                stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx'); // Replace with your publishable key
+                elements = stripe.elements();
                 
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
+                // Create card element
+                const style = {
+                    base: {
+                        color: '#f0f0f0',
+                        fontFamily: 'Inter, sans-serif',
+                        fontSmoothing: 'antialiased',
+                        fontSize: '16px',
+                        '::placeholder': {
+                            color: '#a0a0a0'
+                        }
                     },
-                    body: JSON.stringify({
-                        message: message,
-                        sessionId: sessionId,
-                        userRole: userProfile.role,
-                        userProfile: userProfile
-                    })
-                });
+                    invalid: {
+                        color: '#ff4d6d',
+                        iconColor: '#ff4d6d'
+                    }
+                };
                 
-                addDebugEntry(`Response status: ${response.status}`);
-                
-                if (!response.ok) {
-                    throw new Error(`Response not OK (${response.status})`);
-                }
-                
-                const data = await response.json();
-                addDebugEntry(`Received response from OpenAI API`);
-                
-                // Add assistant message to UI
-                addAssistantMessage(data.reply);
-                
-                // Save message to chat history
-                saveMessage('assistant', data.reply);
-                
-            } catch (err) {
-                addDebugEntry(`Error: ${err.message}`);
-                removeTypingIndicator();
-                addAssistantMessage("Sorry, I encountered an error. Please try again later.");
-            }
-        }
-
-        // Save message to chat history
-        function saveMessage(role, content) {
-            if (!currentChatId || !chats[currentChatId]) return;
-            
-            // Add message to chat
-            chats[currentChatId].messages.push({
-                role: role,
-                content: content,
-                timestamp: new Date().toISOString()
-            });
-            
-            // Update chat title if it's the first user message
-            if (role === 'user' && chats[currentChatId].messages.filter(m => m.role === 'user').length === 1) {
-                // Use first 30 characters of message as title
-                const title = content.length > 30 ? content.substring(0, 30) + '...' : content;
-                chats[currentChatId].title = title;
-                
-                // Update title in sidebar
-                const chatItem = document.querySelector(`.chat-item[data-id="${currentChatId}"]`);
-                if (chatItem) {
-                    chatItem.querySelector('.chat-title').textContent = title;
-                }
-            }
-            
-            // Save chats to localStorage
-            saveChats();
-        }
-
-        // Rename a chat
-        function renameChat(chatId, newName) {
-            if (!chats[chatId]) return;
-            
-            chats[chatId].title = newName;
-            
-            // Update title in sidebar
-            const chatItem = document.querySelector(`.chat-item[data-id="${chatId}"]`);
-            if (chatItem) {
-                chatItem.querySelector('.chat-title').textContent = newName;
-            }
-            
-            // Save chats to localStorage
-            saveChats();
-        }
-
-        // Delete a chat
-        function deleteChat(chatId) {
-            if (!chats[chatId]) return;
-            
-            // Confirm deletion
-            if (!confirm('Are you sure you want to delete this chat?')) return;
-            
-            // Remove chat from list
-            const chatItem = document.querySelector(`.chat-item[data-id="${chatId}"]`);
-            if (chatItem) {
-                chatItem.remove();
-            }
-            
-            // Delete chat object
-            delete chats[chatId];
-            
-            // Save chats to localStorage
-            saveChats();
-            
-            // If current chat was deleted, load another chat or start a new one
-            if (currentChatId === chatId) {
-                const chatIds = Object.keys(chats);
-                if (chatIds.length > 0) {
-                    loadChat(chatIds[0]);
-                } else {
-                    startNewChat();
-                }
-            }
-        }
-
-        // Create a new folder
-        function createNewFolder(folderName) {
-            const folderId = 'folder-' + Date.now();
-            
-            // Add to folders array
-            folders.push({
-                id: folderId,
-                name: folderName,
-                isDefault: false
-            });
-            
-            // Add to folder list
-            const folderItem = document.createElement('li');
-            folderItem.className = 'folder-item';
-            folderItem.dataset.id = folderId;
-            folderItem.innerHTML = `
-                <span class="folder-icon">📁</span> ${folderName}
-            `;
-            
-            folderItem.addEventListener('click', () => {
-                // Highlight selected folder
-                document.querySelectorAll('.folder-item').forEach(item => {
-                    item.classList.remove('active');
-                });
-                folderItem.classList.add('active');
-                
-                // Filter chats by folder
-                filterChatsByFolder(folderId);
-            });
-            
-            folderList.appendChild(folderItem);
-        }
-
-        // Filter chats by folder
-        function filterChatsByFolder(folderId) {
-            // Show all chats if "All Chats" folder is selected
-            if (folderId === 'all') {
-                document.querySelectorAll('.chat-item').forEach(item => {
-                    item.style.display = 'flex';
-                });
-                return;
-            }
-            
-            // Filter chats by folder ID
-            document.querySelectorAll('.chat-item').forEach(item => {
-                const chatId = item.dataset.id;
-                if (chats[chatId] && chats[chatId].folderId === folderId) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        // Open rename chat modal
-        function openRenameModal(chatId) {
-            currentChatId = chatId;
-            chatNameInput.value = chats[chatId].title;
-            renameChatModal.classList.add('active');
-            chatNameInput.focus();
-        }
-
-        // Handle file upload
-        function handleFileUpload(files) {
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                
-                // Check file type
-                const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-                if (!allowedTypes.includes(file.type)) {
-                    alert('Only PDF and DOC files are supported');
-                    continue;
-                }
-                
-                // Check file size (max 10MB)
-                if (file.size > 10 * 1024 * 1024) {
-                    alert('File size must be less than 10MB');
-                    continue;
-                }
-                
-                // Add file to uploaded files
-                uploadedFiles.push(file);
-                
-                // Add file to UI
-                const fileElement = document.createElement('div');
-                fileElement.className = 'uploaded-file';
-                
-                const fileIcon = file.type.includes('pdf') ? '📄' : '📝';
-                const fileSize = formatFileSize(file.size);
-                
-                fileElement.innerHTML = `
-                    <div class="file-icon">${fileIcon}</div>
-                    <div class="file-info">
-                        <div class="file-name">${file.name}</div>
-                        <div class="file-size">${fileSize}</div>
-                    </div>
-                    <button class="file-remove" data-index="${uploadedFiles.length - 1}">×</button>
-                `;
-                
-                fileElement.querySelector('.file-remove').addEventListener('click', (e) => {
-                    const index = parseInt(e.target.dataset.index);
-                    uploadedFiles.splice(index, 1);
-                    fileElement.remove();
-                    
-                    // Update indexes for remaining files
-                    document.querySelectorAll('.file-remove').forEach((btn, i) => {
-                        btn.dataset.index = i;
+                // Mount the card element when checkout modal is opened
+                document.querySelectorAll('.select-package-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        setTimeout(() => {
+                            if (!card) {
+                                card = elements.create('card', { style });
+                                card.mount('#card-element');
+                                
+                                // Handle validation errors
+                                card.addEventListener('change', function(event) {
+                                    const displayError = document.getElementById('card-errors');
+                                    if (event.error) {
+                                        displayError.textContent = event.error.message;
+                                    } else {
+                                        displayError.textContent = '';
+                                    }
+                                });
+                            }
+                        }, 500);
                     });
                 });
-                
-                uploadedFilesContainer.appendChild(fileElement);
+            } catch (error) {
+                console.log('Stripe not loaded:', error);
             }
-            
-            // Reset file input
-            fileUploadInput.value = '';
-        }
 
-        // Toggle theme
-        function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            
-            if (isDarkMode) {
-                document.documentElement.style.setProperty('--primary-bg', '#1a1a1a');
-                document.documentElement.style.setProperty('--secondary-bg', '#2a2a2a');
-                document.documentElement.style.setProperty('--text-color', '#f0f0f0');
-                document.documentElement.style.setProperty('--input-bg', '#333');
-                document.documentElement.style.setProperty('--border-color', '#444');
-                document.documentElement.style.setProperty('--hover-color', '#3a3a3a');
-                themeToggle.innerHTML = '<span>🌙</span> Dark Mode';
-            } else {
-                document.documentElement.style.setProperty('--primary-bg', '#f5f5f5');
-                document.documentElement.style.setProperty('--secondary-bg', '#ffffff');
-                document.documentElement.style.setProperty('--text-color', '#333333');
-                document.documentElement.style.setProperty('--input-bg', '#f0f0f0');
-                document.documentElement.style.setProperty('--border-color', '#e0e0e0');
-                document.documentElement.style.setProperty('--hover-color', '#f0f0f0');
-                themeToggle.innerHTML = '<span>☀️</span> Light Mode';
+            // Navbar scroll effect
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Mobile menu toggle
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.add('active');
+            });
+
+            mobileMenuClose.addEventListener('click', function() {
+                mobileMenu.classList.remove('active');
+            });
+
+            // Learn More button - scroll to Why Care Mate section
+            learnMoreBtn.addEventListener('click', function() {
+                const whyCareMateSection = document.getElementById('why-care-mate');
+                whyCareMateSection.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Sign In button
+            signInBtn.addEventListener('click', function() {
+                openAuthModal('signin');
+            });
+
+            mobileSignInBtn.addEventListener('click', function() {
+                mobileMenu.classList.remove('active');
+                openAuthModal('signin');
+            });
+
+            // Chat preview click
+            chatPreview.addEventListener('click', function() {
+                openChatInputModal();
+            });
+
+            chatPreviewSend.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent triggering the parent click event
+                openChatInputModal();
+            });
+
+            // Chat input modal
+            function openChatInputModal() {
+                chatInputModal.classList.add('active');
+                chatInputField.focus();
             }
-        }
 
-        // Save chats to localStorage
-        function saveChats() {
-            localStorage.setItem('chats', JSON.stringify(chats));
-        }
+            function closeChatInputModal() {
+                chatInputModal.classList.remove('active');
+                chatInputField.value = '';
+            }
 
-        // Load chats from localStorage
-        function loadChats() {
-            const savedChats = localStorage.getItem('chats');
-            if (savedChats) {
-                chats = JSON.parse(savedChats);
+            chatInputCancel.addEventListener('click', closeChatInputModal);
+
+            chatInputSubmit.addEventListener('click', function() {
+                const message = chatInputField.value.trim();
+                if (message) {
+                    // Store the message for later use
+                    localStorage.setItem('userMessage', message);
+                    
+                    // Close chat input modal
+                    closeChatInputModal();
+                    
+                    // Check if user is logged in
+                    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                    
+                    if (isLoggedIn) {
+                        // Redirect to chat page
+                        window.location.href = '/chat.html';
+                    } else {
+                        // Open role pricing modal
+                        openRolePricingModal();
+                    }
+                }
+            });
+
+            chatInputField.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    chatInputSubmit.click();
+                }
+            });
+
+            // Role pricing modal
+            function openRolePricingModal() {
+                rolePricingModal.classList.add('active');
+            }
+
+            function closeRolePricingModal() {
+                rolePricingModal.classList.remove('active');
+            }
+
+            rolePricingCancel.addEventListener('click', closeRolePricingModal);
+
+            // Free Plan button
+            freePlanBtn.addEventListener('click', function() {
+                closeRolePricingModal();
+                openFreePlanModal();
+            });
+
+            // Free Plan modal
+            function openFreePlanModal() {
+                freePlanModal.classList.add('active');
+            }
+
+            function closeFreePlanModal() {
+                freePlanModal.classList.remove('active');
+            }
+
+            freePlanCancel.addEventListener('click', closeFreePlanModal);
+
+            freePlanSignup.addEventListener('click', function() {
+                closeFreePlanModal();
+                openAuthModal('signup');
                 
-                // Add chats to the list
-                Object.values(chats).forEach(chat => {
-                    addChatToList(chat);
+                // Set free plan flag
+                localStorage.setItem('selectedPlan', 'free');
+            });
+
+            // Authentication modal
+            function openAuthModal(tab = 'signin') {
+                authModal.classList.add('active');
+                
+                if (tab === 'signin') {
+                    activateSigninTab();
+                } else {
+                    activateSignupTab();
+                }
+            }
+
+            function closeAuthModal() {
+                authModal.classList.remove('active');
+            }
+
+            function activateSigninTab() {
+                signinTab.classList.add('active');
+                signupTab.classList.remove('active');
+                signinForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                signinFooter.style.display = 'block';
+                signupFooter.style.display = 'none';
+            }
+
+            function activateSignupTab() {
+                signinTab.classList.remove('active');
+                signupTab.classList.add('active');
+                signinForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                signinFooter.style.display = 'none';
+                signupFooter.style.display = 'block';
+            }
+
+            signinTab.addEventListener('click', activateSigninTab);
+            signupTab.addEventListener('click', activateSignupTab);
+            toSignup.addEventListener('click', activateSignupTab);
+            toSignin.addEventListener('click', activateSigninTab);
+
+            // Sign in and Sign up buttons
+            signinBtn.addEventListener('click', function() {
+                const email = document.getElementById('signin-email').value;
+                const password = document.getElementById('signin-password').value;
+                
+                if (email && password) {
+                    // Simulate successful login
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userEmail', email);
+                    
+                    // Check if there was a pending message
+                    const pendingMessage = localStorage.getItem('userMessage');
+                    
+                    closeAuthModal();
+                    
+                    if (pendingMessage) {
+                        // Redirect to chat page
+                        window.location.href = '/chat.html';
+                    }
+                }
+            });
+
+            signupBtn.addEventListener('click', function() {
+                const name = document.getElementById('signup-name').value;
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const confirmPassword = document.getElementById('signup-confirm-password').value;
+                
+                if (name && email && password && confirmPassword && password === confirmPassword) {
+                    // Simulate successful registration
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userEmail', email);
+                    localStorage.setItem('userName', name);
+                    
+                    // Check if free plan was selected
+                    const selectedPlan = localStorage.getItem('selectedPlan');
+                    
+                    closeAuthModal();
+                    
+                    if (selectedPlan === 'free') {
+                        // Set free plan credits
+                        localStorage.setItem('credits', '500');
+                        
+                        // Check if there was a pending message
+                        const pendingMessage = localStorage.getItem('userMessage');
+                        
+                        if (pendingMessage) {
+                            // Redirect to chat page
+                            window.location.href = '/chat.html';
+                        }
+                    }
+                }
+            });
+
+            // Select package
+            selectPackageBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const package = this.dataset.package;
+                    const price = this.dataset.price;
+                    
+                    // Store the selected package
+                    localStorage.setItem('selectedPackage', package);
+                    localStorage.setItem('packagePrice', price);
+                    
+                    // Close role pricing modal
+                    closeRolePricingModal();
+                    
+                    // Open checkout modal
+                    openCheckoutModal(package, price);
                 });
+            });
+
+            // Checkout modal
+            function openCheckoutModal(packageName, price) {
+                // Set checkout details
+                let planName = '';
+                switch(packageName) {
+                    case 'participant':
+                        planName = 'NDIS Participant / Carer';
+                        break;
+                    case 'coordinator':
+                        planName = 'Support Coordinator';
+                        break;
+                    case 'manager':
+                        planName = 'Plan Manager';
+                        break;
+                }
+                
+                checkoutPlanName.textContent = planName;
+                checkoutPlanPrice.textContent = `$${price}.00`;
+                checkoutTotal.textContent = `$${price}.00`;
+                
+                // Set renewal date (1 month from now)
+                const renewalDate = new Date();
+                renewalDate.setMonth(renewalDate.getMonth() + 1);
+                checkoutRenewal.textContent = renewalDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                
+                // Open modal
+                checkoutModal.classList.add('active');
             }
-        }
 
-        // Helper functions
-        function generateSessionId() {
-            return 'session-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
-        }
+            function closeCheckoutModal() {
+                checkoutModal.classList.remove('active');
+            }
 
-        function generateChatId() {
-            return 'chat-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
-        }
+            checkoutCancel.addEventListener('click', closeCheckoutModal);
 
-        function formatTimestamp(timestamp) {
-            const date = new Date(timestamp);
-            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        }
+            checkoutSubmit.addEventListener('click', function() {
+                // Simulate successful payment
+                const selectedPackage = localStorage.getItem('selectedPackage');
+                
+                // Set user as logged in
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('activePlan', selectedPackage);
+                
+                closeCheckoutModal();
+                
+                // Check if there was a pending message
+                const pendingMessage = localStorage.getItem('userMessage');
+                
+                if (pendingMessage) {
+                    // Redirect to chat page
+                    window.location.href = '/chat.html';
+                }
+            });
 
-        function formatFileSize(bytes) {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-        }
+            // Select role
+            selectRoleBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const role = this.dataset.role;
+                    
+                    // Store the selected role
+                    localStorage.setItem('userRole', role);
+                    
+                    // Open chat input modal
+                    openChatInputModal();
+                });
+            });
 
-        function scrollToBottom() {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
+            // Start chat buttons
+            startChatBtns.forEach(btn => {
+                btn.addEventListener('click', openChatInputModal);
+            });
 
-        function addDebugEntry(message) {
-            const entry = document.createElement('div');
-            entry.className = 'debug-entry';
-            
-            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-            entry.textContent = `[${timestamp}] ${message}`;
-            
-            debugPanel.appendChild(entry);
-            debugPanel.scrollTop = debugPanel.scrollHeight;
-        }
+            // Start journey button
+            startJourneyBtn.addEventListener('click', openChatInputModal);
 
-        // Initialize the app
-        init();
+            // Intersection Observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            // Observer for section titles and subtitles
+            const titleObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        titleObserver.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe section titles and subtitles
+            sectionTitles.forEach(title => {
+                titleObserver.observe(title);
+            });
+
+            sectionSubtitles.forEach(subtitle => {
+                titleObserver.observe(subtitle);
+            });
+
+            // Observer for cards
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        cardObserver.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe feature cards
+            featureCards.forEach((card, index) => {
+                card.style.transitionDelay = `${index * 0.1}s`;
+                cardObserver.observe(card);
+            });
+
+            // Observe service cards
+            serviceCards.forEach((card, index) => {
+                card.style.transitionDelay = `${index * 0.1}s`;
+                cardObserver.observe(card);
+            });
+
+            // Observe role cards
+            roleCards.forEach((card, index) => {
+                card.style.transitionDelay = `${index * 0.1}s`;
+                cardObserver.observe(card);
+            });
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Close mobile menu if open
+                    mobileMenu.classList.remove('active');
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
